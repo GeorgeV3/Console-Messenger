@@ -1,0 +1,113 @@
+package paketo;
+
+import java.util.ArrayList;
+
+public class User {
+
+	private Database database = new Database();	
+
+	private int id;
+	private String userName;
+	private String userPassword;
+	private String status;
+	private String role;
+	private int credits;
+
+	public void view (String username ){
+		ArrayList<Message> messageList = database.getAllMessages(username);
+		for ( Message printList : messageList ) {	
+			System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getStatus()
+			+ " " + printList.getDate());	
+		}	
+	}
+
+	public void viewMessage(String username , int idMessage)  {
+		ArrayList<Message> messageList = database.getMessage(username, idMessage);
+		if (messageList.size()>0) {
+			for ( Message printList : messageList ) {
+				System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getMessageData()
+				+ " " + printList.getDate());	
+			}	
+		}else {
+			System.out.println("You put wrong id number.");
+		}
+	}	
+
+	public void send(String receiver, String sender , String message ){
+		if(database.sendMessage(receiver, sender, message)== true) {
+			System.out.println("Message send.");
+		}else {
+			System.out.println("Message did not send.");
+		}
+	}
+	
+	public void edit(){
+		System.out.println("normaluser edit");
+	}
+	public void deleteMessage(){}
+	public void deleteUser(){}
+	public void createUser(){}
+	public void assignRole(){}
+
+	public User() {}
+	public User(int id, String userName, String userPassword, String status, String role, int credits) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.userPassword = userPassword;
+		this.status = status;
+		this.role = role;
+		this.credits = credits;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserPassword() {
+		return userPassword;
+	}
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
+	public String getStatusCheck() {
+		return status;
+	}
+	public void setStatusCheck(String status) {
+		this.status = status;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public int getCredits() {
+		return credits;
+	}
+	public void setCredits(int credits) {
+		this.credits = credits;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", userPassword=" + userPassword + ", status="
+				+ status + ", role=" + role + ", credits=" + credits + "]";
+	}
+
+
+}
