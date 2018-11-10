@@ -172,56 +172,110 @@ public class Menu {
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	
+			System.out.println("\t\t----- WELCOME TO SUPER ADMIN MENU -----");
 			System.out.println("\n\nTell us what you want to do by pressing the right keys...");
 			System.out.println("\t\tPRESS 1 - TO SEE ALL USERS");
 			System.out.println("\t\tPRESS 2 - TO CREATE A USER");
+			System.out.println("\t\tPRESS 3 - TO DELETE A USER");
+			System.out.println("\t\tPRESS 4 - TO UPDATE A USER");
+			System.out.println("\t\tPRESS 5 - TO ASSIGN ROLE TO A USER");
+			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
+				
 				userR.viewUsers();
 				break;
-			case "2":
+				
+			case "2"://create user
 				System.out.println("Write a username for the user.");
 				String username = console.readLine();
 				System.out.println("Write a password for the user.");
 				String password = console.readLine();
 				userR.createUser(username , password);
 				break;
-			case "3":
+				
+			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
 				String usernameDelete = console.readLine();
 				userR.deleteUser(usernameDelete);
 				break;
-			case "4":
+				
+			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
 				String usernameUpdate = console.readLine();
 				System.out.println("");
-				System.out.println("Press 1 for change username Or 2 for change password Or 3 for change both.\n\t Or press e to Exit");
+				System.out.println("Press 1 for change username Or "
+						+ "2 for change password Or 3 for change both.\n\t Or press e to Exit");
 				String h = console.readLine();
 				while (!h.equals("1") && !h.equals("2") && (!h.equals("3")) && !h.equals("e")) {
-					System.out.println("please provide VALID  argument. 1 for username or 2 for password or 3 for both.\n\t Or e to Exit");
+					System.out.println("please provide VALID  argument. 1 for username Or "
+							+ "2 for password Or 3 for both.\n\t Or e to Exit");
 					h = console.readLine();
 				}
 				if (h.equals("1")) {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
 					String query ="UPDATE users SET username = '" + newUsername +"' WHERE username = '" + usernameUpdate + "';";
-					userR.updateUser(query);
+					if(userR.updateUser(query)== true) {
+						System.out.println("Update successfull.");
+					}else {
+						System.out.println("Update fail something had gone wrong.");
+					}
 					break;
 				}
 				if (h.equals("2")) {
-
-
+					System.out.println("Write the new password for the user.");
+					String newPassword = console.readLine();
+					String query ="UPDATE users SET password = '" + newPassword +"' WHERE username = '" + usernameUpdate + "';";
+					if(userR.updateUser(query)== true) {
+						System.out.println("Update successfull.");
+					}else {
+						System.out.println("Update fail something had gone wrong.");
+					}
 					break;
 				}
 				if (h.equals("3")) {
-
-
+					System.out.println("Write the new username for the user.");
+					String newUsername = console.readLine();
+					System.out.println("Write the new password for the user.");
+					String newPassword = console.readLine();
+					String query ="UPDATE users SET username = '" + newUsername +"' , password = '" + newPassword + 
+							" WHERE username = '" + usernameUpdate + "';";
+					if(userR.updateUser(query)== true) {
+						System.out.println("Update successfull.");
+					}else {
+						System.out.println("Update fail something had gone wrong.");
+					}					
 					break;
 				}
 				if (h.equals("e")) {
 					break;
 				}
+				
+			case "5"://assignRole
+				System.out.println("Write the name of the user who want to change a Role.");
+				String usernameAssign = console.readLine();
+				System.out.println("Press 1 for assign to EditRole "
+						+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\n\t Or press e to Exit");
+				String h2 = console.readLine();
+				while (!h2.equals("1") && !h2.equals("2") && (!h2.equals("3")) && !h2.equals("e")) {
+					System.out.println("please provide VALID  argument. 1 for assign to EditRole "
+							+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\\n\\t Or press e to Exit");
+					h2 = console.readLine();
+				}if (h2.equals("1")) {
+					String query ="UPDATE users SET role ='EditRole' where username = '" + usernameAssign +"';";
+					userR.assignRole(query);
+				}
+				if (h2.equals("2")) {
+					String query ="UPDATE users SET role ='DeleteRole' where username = '" + usernameAssign +"';";
+					userR.assignRole(query);
+				}
+				if (h2.equals("3")) {
+					String query ="UPDATE users SET role ='NoRole' where username = '" + usernameAssign +"';";
+					userR.assignRole(query);
+				}
+				break;
 
 			case "e":
 				db.changeStatus(user.getUserName(),"offline");

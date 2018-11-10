@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AdminRole extends User {
-	
+
 	Database db = new Database();
 
 
-	
+
 	//public void view(){}
 	public void createUser(String username , String password) {
 		if (db.createUser(username, password) == true) {
@@ -18,23 +18,24 @@ public class AdminRole extends User {
 			System.out.println("Something has gone wrong.");
 		}
 	}
-	
+
 	public void viewUsers() {
 		try {
 			db.connect();
 			Statement stm =db.connect().createStatement();
-			String sql = "SELECT username , role , status , credits\r\n" + 
+			String sql = "SELECT username ,  role , status , credits , status\r\n" + 
 					"FROM users \r\n" + 
 					"WHERE username <>\"admin\";";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
-				System.out.println(rst.getString("username" + " " + "role" + "" + "credits"));
+				System.out.println("Username: "+rst.getString("username") + "      \t| Role: " + rst.getString("role") 
+				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status"));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
-	
+
 	public void deleteUser(String username){
 		if (db.deleteUser(username) == true) {
 			System.out.println("User delete successfull.");
@@ -54,10 +55,16 @@ public class AdminRole extends User {
 			System.out.println("wrong execute statment.");
 			userUpdate = false;
 		}
-		return userUpdate;
+			return userUpdate;
 	}
-	
-	public void assignRole(){}
+
+	public void assignRole(String query){
+		if (db.executeUpdate(query)==true) {
+			System.out.println("Assign Role succefull.");
+		}else {
+			System.out.println("Assign role fail , something had gone wrong.");
+		}
+	}
 
 	public AdminRole() {
 		// TODO Auto-generated constructor stub

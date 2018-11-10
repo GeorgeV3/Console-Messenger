@@ -43,13 +43,12 @@ public class User {
 	
 	public void editQuestion(int idQts, String username, String newQ){}
 	public void deleteMessage(int idmsg , int iduser){}
-	
 	public void createUser(String username , String password){}
 	public void viewUsers(){}
 	public void deleteUser(String username){}
 	public boolean updateUser(String query){
 		return false;}
-	public void assignRole(String username){}
+	public void assignRole(String query){}
 
 	public User() {}
 	public User(int id, String userName, String userPassword, String status, String role, int credits) {

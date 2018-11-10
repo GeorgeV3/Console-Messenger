@@ -277,7 +277,7 @@ public class Database {
 		try {
 			connect();
 			PreparedStatement ps;
-			ps = connection.prepareStatement("DELETE FROM users WHERE username ? ;");
+			ps = connection.prepareStatement("DELETE FROM users WHERE username = ? ;");
 			ps.setString(1,username);
 			ps.executeUpdate();
 			connect().close();		
@@ -304,6 +304,20 @@ public class Database {
 		return userUpdate;
 	}
 	
+	public boolean executeUpdate(String query){
+		boolean execute = true ;
+		try {
+			connect();
+			Statement stm = connect().createStatement();
+			stm.executeUpdate(query);
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+			execute = false;
+		}
+			return execute;
+	}
 	
 
 
