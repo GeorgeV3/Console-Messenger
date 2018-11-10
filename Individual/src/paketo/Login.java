@@ -52,29 +52,25 @@ public class Login {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// General methods i create them in login class for don't do create a new helper one , because in menu class i will call ///
+	// General methods ,, i create them in login class so i don't  create a new helper one , because in menu class i will call ///
 	// the login methods , so for don't make a new Helper helper = new Helper(); to use the already new login.               ///
 	public User getUserInfo(String username) {
 		Database db = new Database();
 		User user = new User();
 		String role = null;
-		String userName = null;
-		int iduser;
-		int credits;
 		try {
 			db.connect();	
-			PreparedStatement ps = db.connect().prepareStatement("Select iduser ,username , role , credits from users where username = ? ;");
+			PreparedStatement ps = db.connect().prepareStatement("Select iduser ,username , role , status , credits "
+					+ "from users where username = ? ;");
 			ps.setString(1,username);
 			ResultSet rst = ps.executeQuery();	
 			while (rst.next()) {			
-				iduser = rst.getInt("iduser");
-				userName = rst.getString("username");
-				role = rst.getString("role");
-				credits = rst.getInt("credits");
-				user.setUserName(userName);
-				user.setId(iduser);
+				user.setId(rst.getInt("iduser"));
+				user.setUserName(rst.getString("username"));
+				role =(rst.getString("role"));
 				user.setRole(role);
-				user.setCredits(credits);		
+				user.setStatus(rst.getString("status"));
+				user.setCredits(rst.getInt("credits"));		
 				System.out.println("\n"+role);		
 			} db.connect().close();			
 		} catch (SQLException e) {
@@ -90,9 +86,11 @@ public class Login {
 			user = new AdminRole();
 		}
 		if (user.getRole() != null && user.getRole().equals("EditRole")) {
+			System.out.print("mesa stin if tou create editorle");
 			user = new EditRole();
 		}
 		if (user.getRole() != null && user.getRole().equals("DeleteRole")) {
+			System.out.print("mesa stin if tou create deleterole");
 			user = new DeleteRole();
 		}
 		return user;

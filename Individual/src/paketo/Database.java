@@ -156,7 +156,7 @@ public class Database {
 		}
 	}
 
-	public boolean updateCredits(String username) {	
+	public void updateCredits(String username) {	
 		try {
 			connect();
 			PreparedStatement ps;
@@ -169,7 +169,6 @@ public class Database {
 			// TODO Auto-generated catch block
 			System.out.println("wrong execute statment.");	
 		}
-		return true;
 	}
 
 	public boolean changeStatus(String username , String status) {
@@ -196,7 +195,7 @@ public class Database {
 			PreparedStatement ps;
 			ps = connection.prepareStatement("INSERT INTO inbox (receiver, sender , message) "
 					+ "VALUES ((SELECT iduser FROM users WHERE username = ?)"
-					+ ",?,?'");
+					+ ",?,?);");
 			ps.setString(1,receiver);
 			ps.setString(2,sender);
 			ps.setString(3,message);
@@ -213,11 +212,14 @@ public class Database {
 		boolean messageDelete = true ;
 		try {
 			connect();
+			System.out.println("idmsg:" + idmsg);
+			System.out.println("iduser:" + iduser);
 			PreparedStatement ps;
 			ps = connection.prepareStatement("DELETE FROM inbox WHERE idmsg = ? and receiver = ? ;");
 			ps.setInt(1,idmsg);
 			ps.setInt(2,iduser);
 			ps.executeUpdate();
+			System.out.println("mesa stin delete message");
 			connect().close();		
 		} catch (SQLException e) {
 			messageDelete = false ;
@@ -227,7 +229,7 @@ public class Database {
 		return messageDelete;	
 	}
 
-	public boolean editQuestion(int idqts , String username , String newQ) {
+	public boolean editQuestion(int idQts , String username , String newQ) {
 		boolean question = true ;
 		try {
 			connect();
@@ -237,7 +239,7 @@ public class Database {
 					"WHERE idqts = ? ;");
 			ps.setString(1,username);
 			ps.setString(2, newQ);
-			ps.setInt(3, idqts);
+			ps.setInt(3, idQts);
 			ps.executeUpdate();
 			connect().close();		
 		} catch (SQLException e) {
@@ -247,6 +249,62 @@ public class Database {
 		}
 		return question;
 	}
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public boolean createUser(String username , String password) {
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connection.prepareStatement("INSERT INTO users (username , password)\r\n" + 
+					"VALUES (?,?);");
+			ps.setString(1,username);
+			ps.setString(2, password);
+			ps.executeUpdate();
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+			return false;
+		}
+		return true ;
+	}
+	
+	public boolean deleteUser(String username){
+		boolean userDelete = true ;
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connection.prepareStatement("DELETE FROM users WHERE username ? ;");
+			ps.setString(1,username);
+			ps.executeUpdate();
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+			userDelete = false;
+		}
+		return userDelete;
+	}
+	
+	public boolean updateUser(String query) {
+		boolean userUpdate = true ;
+		try {
+			connect();
+			stm = connection.createStatement();
+			ResultSet rst = stm.executeQuery(query);
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+			userUpdate = false;
+		}
+		return userUpdate;
+	}
+	
+	
 
 
 

@@ -1,5 +1,4 @@
 package paketo;
-
 import java.util.ArrayList;
 
 public class User {
@@ -36,18 +35,21 @@ public class User {
 	public void send(String receiver, String sender , String message ){
 		if(database.sendMessage(receiver, sender, message) == true) {
 			System.out.println("Message send.");
+			database.updateCredits(sender);
 		}else {
-			System.out.println("Message fail to send it.\nNo user with name %1$s exist." + receiver);
+			System.out.printf("Message fail to send it.\nNo user with name %1$s exist.", receiver);
 		}
 	}
 	
-	public void edit(int idqts , String username , String newQ){
-		System.out.println("normaluser edit");
-	}
+	public void editQuestion(int idQts, String username, String newQ){}
 	public void deleteMessage(int idmsg , int iduser){}
-	public void deleteUser(){}
-	public void createUser(){}
-	public void assignRole(){}
+	
+	public void createUser(String username , String password){}
+	public void viewUsers(){}
+	public void deleteUser(String username){}
+	public boolean updateUser(String query){
+		return false;}
+	public void assignRole(String username){}
 
 	public User() {}
 	public User(int id, String userName, String userPassword, String status, String role, int credits) {
