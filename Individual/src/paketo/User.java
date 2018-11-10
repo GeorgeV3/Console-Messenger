@@ -13,16 +13,16 @@ public class User {
 	private String role;
 	private int credits;
 
-	public void view (String username ){
-		ArrayList<Message> messageList = database.getAllMessages(username);
+	public void view (int iduser ){
+		ArrayList<Message> messageList = database.getAllMessages(iduser);
 		for ( Message printList : messageList ) {	
 			System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getStatus()
 			+ " " + printList.getDate());	
 		}	
 	}
 
-	public void viewMessage(String username , int idMessage)  {
-		ArrayList<Message> messageList = database.getMessage(username, idMessage);
+	public void viewMessageById(int idmsg , int iduser)  {
+		ArrayList<Message> messageList = database.getMessage(idmsg , iduser);
 		if (messageList.size()>0) {
 			for ( Message printList : messageList ) {
 				System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getMessageData()
@@ -34,17 +34,17 @@ public class User {
 	}	
 
 	public void send(String receiver, String sender , String message ){
-		if(database.sendMessage(receiver, sender, message)== true) {
+		if(database.sendMessage(receiver, sender, message) == true) {
 			System.out.println("Message send.");
 		}else {
-			System.out.println("Message did not send.");
+			System.out.println("Message fail to send it.\nNo user with name %1$s exist." + receiver);
 		}
 	}
 	
-	public void edit(){
+	public void edit(int idqts , String username , String newQ){
 		System.out.println("normaluser edit");
 	}
-	public void deleteMessage(){}
+	public void deleteMessage(int idmsg , int iduser){}
 	public void deleteUser(){}
 	public void createUser(){}
 	public void assignRole(){}

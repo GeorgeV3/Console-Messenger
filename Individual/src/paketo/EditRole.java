@@ -9,8 +9,13 @@ public class EditRole extends User {
 	}
 
 
-	public void edit(){
-		System.out.println("edit role , edit");
+	public void edit(int idqts , String username , String newQ){
+		Database database = new Database();
+		if (database.editQuestion(idqts, username, newQ)== true) {
+			System.out.printf("Question with id:%1$s successfully update with new question.", idqts);
+		}else {
+			System.out.println("Something gone wrong, question did not upgrade.");
+		}
 	}
 	
 
