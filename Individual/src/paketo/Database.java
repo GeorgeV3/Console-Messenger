@@ -146,7 +146,7 @@ public class Database {
 				String question = rst.getString("question");
 				Date date = format.parse(rst.getString("datetime"));
 				String datetime = dformat.format(date);
-				System.out.println("ID: " + id +"  "+ question +"  From: "+ senderQ + 
+				System.out.println("ID: " + id +"  Question: "+ question +"\nFrom: "+ senderQ + 
 						" Date: " + datetime );
 			}connect().close();
 		} catch (SQLException | ParseException e) {
@@ -252,7 +252,7 @@ public class Database {
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	////     Admin methods
 	
 	public boolean createUser(String username , String password) {
 		try {
@@ -289,7 +289,7 @@ public class Database {
 		return userDelete;
 	}
 	
-	public boolean updateUser(String query) {
+	public boolean executeQuery(String query) {
 		boolean userUpdate = true ;
 		try {
 			connect();

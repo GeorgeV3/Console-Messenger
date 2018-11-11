@@ -7,8 +7,7 @@ public class Menu {
 	private User user = new User();
 	private Database db = new Database();
 	private Login login = new Login();
-
-
+	FilesWriter filesWriter= new FilesWriter();
 
 	public Menu() {
 		// TODO Auto-generated constructor stub
@@ -26,20 +25,16 @@ public class Menu {
 			case "1":		
 				System.out.println("\t\t\tFILL THE TEXT FIELDS");
 				String username = console.readLine("Username: ");
-				//read the password, without echoing the output 
 				String password = new String(console.readPassword("Password: "));
-				//verify user name and password using some mechanism 
+				//check that user has enter a username & password 
 				if (login.validateLogin(username , password)) {
-					//verify username & password by server  side 	
+					//validate username & password by server  side 	
 					if(	login.validateServerLogin(username.trim() , password.trim())) {
 						console.printf("Welcome, %1$s.",username);
 						db.changeStatus(username,"online");
-						user = login.getUserInfo(username);
-						if (user.getRole().equals("Admin")) {
-							adminMenu();
-						}else {
-							userMenu();
-						}
+						user = login.getUserInfo(username);	
+						filesWriter.keepActions(user.getUserName(),"login");
+						userMenu();			
 					}
 				}break;	
 			case "e":
@@ -62,11 +57,14 @@ public class Menu {
 			System.out.println("\t\tPRESS 1 - FOR SEE THE QUESTIONS");
 			System.out.println("\t\tPRESS 2 - TO READ A SPECIFIC MESSAGE");
 			System.out.println("\t\tPRESS 3 - TO SEND A MESSAGE\t\t\t");	
-			if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole")) {
+			if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
 				System.out.println("\t\tPRESS 4 - TO EDIT A QUESTION");
 			}
-			if (user.getRole().equals("DeleteRole")) {
+			if (user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
 				System.out.println("\t\tPRESS 5 - TO DELETE A MESSAGE");
+			}
+			if (user.getRole().equals("Admin")) {
+				System.out.println("\t\tPRESS a - TO CHANGE TO SUPER ADMIN MENU");
 			}
 			System.out.println("\t\tPRESS h - FOR HELP SECTION");
 			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
@@ -107,13 +105,14 @@ public class Menu {
 				break;
 			case "4":
 				//edit a question.
-				if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole")) {
+				if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
 					System.out.println("Plz give the id of the question you want to edit.");
 					String idQts = console.readLine();
 					try {
 						System.out.println("Write the new question.");
 						String newQ = console.readLine();
 						userR.editQuestion(Integer.parseInt(idQts), user.getUserName() , newQ);
+						filesWriter.keepActions(user.getUserName(),"Edit_Question");
 					} catch (NumberFormatException e) {
 						if(idQts.equals("") || idQts == null) {
 							System.out.println("You have entered empty input."); 
@@ -128,12 +127,13 @@ public class Menu {
 				break;
 			case "5":
 				//delete message base on id msg
-				if (user.getRole().equals("DeleteRole")) {
+				if (user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
 					System.out.println("Plz provide an id of message you want to delete.");
 					String idMsgD = console.readLine();
 					Integer.parseInt(idMsgD);
 					try {
 						userR.deleteMessage(Integer.parseInt(idMsgD) , user.getId());
+						filesWriter.keepActions(user.getUserName(),"Delete_Message");
 					} catch (NumberFormatException e) {
 						if(idMsgD.equals("") || idMsgD == null) {
 							System.out.println("You have entered empty input."); 
@@ -141,6 +141,13 @@ public class Menu {
 							System.out.println("You've entered non-intereger number.");
 						}
 					}
+				}else {
+					System.out.println("You provided wrong input. Hit e to exit");
+				}
+				break;
+			case "a"://join to admin menu.
+				if (user.getRole().equals("Admin")) {
+					adminMenu();
 				}else {
 					System.out.println("You provided wrong input. Hit e to exit");
 				}
@@ -157,6 +164,7 @@ public class Menu {
 				break;
 			case "e":
 				db.changeStatus(user.getUserName(),"offline");
+				filesWriter.keepActions(user.getUserName(),"logout");
 				System.out.println("EXIT PROGRAM");
 				System.exit(0);
 				break;
@@ -172,35 +180,34 @@ public class Menu {
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	
-			System.out.println("\t\t----- WELCOME TO SUPER ADMIN MENU -----");
-			System.out.println("\n\nTell us what you want to do by pressing the right keys...");
+			System.out.println("\n\t----- WELCOME TO SUPER ADMIN MENU -----");
+			System.out.println("\nTell us what you want to do by pressing the right keys...");
 			System.out.println("\t\tPRESS 1 - TO SEE ALL USERS");
 			System.out.println("\t\tPRESS 2 - TO CREATE A USER");
 			System.out.println("\t\tPRESS 3 - TO DELETE A USER");
 			System.out.println("\t\tPRESS 4 - TO UPDATE A USER");
 			System.out.println("\t\tPRESS 5 - TO ASSIGN ROLE TO A USER");
+			System.out.println("\t\tPRESS r - TO RETURN TO USER MENU");
 			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
-				
+				System.out.println("__________________________________________________________________________________");
 				userR.viewUsers();
-				break;
-				
+				System.out.println("|_______________________|_______________________|_______________|_________________|");
+				break;	
 			case "2"://create user
 				System.out.println("Write a username for the user.");
 				String username = console.readLine();
 				System.out.println("Write a password for the user.");
 				String password = console.readLine();
 				userR.createUser(username , password);
-				break;
-				
+				break;			
 			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
 				String usernameDelete = console.readLine();
 				userR.deleteUser(usernameDelete);
-				break;
-				
+				break;		
 			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
 				String usernameUpdate = console.readLine();
@@ -246,13 +253,9 @@ public class Menu {
 						System.out.println("Update successfull.");
 					}else {
 						System.out.println("Update fail something had gone wrong.");
-					}					
-					break;
+					}
+					break;					
 				}
-				if (h.equals("e")) {
-					break;
-				}
-				
 			case "5"://assignRole
 				System.out.println("Write the name of the user who want to change a Role.");
 				String usernameAssign = console.readLine();
@@ -275,10 +278,13 @@ public class Menu {
 					String query ="UPDATE users SET role ='NoRole' where username = '" + usernameAssign +"';";
 					userR.assignRole(query);
 				}
-				break;
-
+				break;		
+			case "r":
+				userMenu();
+				break;		
 			case "e":
 				db.changeStatus(user.getUserName(),"offline");
+				filesWriter.keepActions(user.getUserName(),"logout");
 				System.out.println("EXIT PROGRAM");
 				System.exit(0);
 				break;

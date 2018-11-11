@@ -3,7 +3,8 @@ import java.util.ArrayList;
 
 public class User {
 
-	private Database database = new Database();	
+	private Database database = new Database();
+	FilesWriter filesWriter = new FilesWriter();
 
 	private int id;
 	private String userName;
@@ -35,6 +36,7 @@ public class User {
 	public void send(String receiver, String sender , String message ){
 		if(database.sendMessage(receiver, sender, message) == true) {
 			System.out.println("Message send.");
+			filesWriter.keepMessages(sender, receiver, message);
 			database.updateCredits(sender);
 		}else {
 			System.out.printf("Message fail to send it.\nNo user with name %1$s exist.", receiver);

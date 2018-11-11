@@ -82,15 +82,15 @@ public class Login {
 
 	public User createUserRole(User user) { 
 		if (user.getRole() != null && user.getRole().equals("Admin")) {
-			System.out.print("mesa stin if tou create admin");
+			//System.out.print("mesa stin if tou create admin");
 			user = new AdminRole();
 		}
 		if (user.getRole() != null && user.getRole().equals("EditRole")) {
-			System.out.print("mesa stin if tou create editorle");
+			//System.out.print("mesa stin if tou create editorle");
 			user = new EditRole();
 		}
 		if (user.getRole() != null && user.getRole().equals("DeleteRole")) {
-			System.out.print("mesa stin if tou create deleterole");
+			//System.out.print("mesa stin if tou create deleterole");
 			user = new DeleteRole();
 		}
 		return user;

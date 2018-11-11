@@ -25,11 +25,11 @@ public class AdminRole extends User {
 			Statement stm =db.connect().createStatement();
 			String sql = "SELECT username ,  role , status , credits , status\r\n" + 
 					"FROM users \r\n" + 
-					"WHERE username <>\"admin\";";
+					"WHERE username !=\"admin\";";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
-				System.out.println("Username: "+rst.getString("username") + "      \t| Role: " + rst.getString("role") 
-				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status"));
+				System.out.println("|Username: "+rst.getString("username") + "  \t| Role: " + rst.getString("role") 
+				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status") + " |");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
