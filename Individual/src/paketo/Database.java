@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -37,7 +39,7 @@ public class Database {
 			return null;
 		}
 	}
-	
+
 	public boolean executeUpdate(String query){
 		boolean execute = true ;
 		try {
@@ -50,7 +52,7 @@ public class Database {
 			System.out.println("wrong execute statment.");
 			execute = false;
 		}
-			return execute;
+		return execute;
 	}
 
 
@@ -105,24 +107,24 @@ public class Database {
 		} return messageList;
 	}
 
-//	public int countStatusMessages(int iduser , String status) {
-//		int countStatus = 0;
-//		try {
-//			connect();
-//			PreparedStatement ps;
-//			ps = connection.prepareStatement("Select count(status) from inbox where receiver = ? and status = ? ;");
-//			ps.setInt(1,iduser);
-//			ps.setString(2, status);
-//			ResultSet rst = ps.executeQuery();
-//			while (rst.next()) {
-//				countStatus = rst.getInt("count(status)");
-//			}connect().close();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			System.out.println("wrong execute statment.");
-//		}
-//		return countStatus;
-//	}
+	//	public int countStatusMessages(int iduser , String status) {
+	//		int countStatus = 0;
+	//		try {
+	//			connect();
+	//			PreparedStatement ps;
+	//			ps = connection.prepareStatement("Select count(status) from inbox where receiver = ? and status = ? ;");
+	//			ps.setInt(1,iduser);
+	//			ps.setString(2, status);
+	//			ResultSet rst = ps.executeQuery();
+	//			while (rst.next()) {
+	//				countStatus = rst.getInt("count(status)");
+	//			}connect().close();
+	//		} catch (SQLException e) {
+	//			// TODO Auto-generated catch block
+	//			System.out.println("wrong execute statment.");
+	//		}
+	//		return countStatus;
+	//	}
 
 	public boolean checkIfExistUser(String username) {
 		try {
@@ -152,7 +154,7 @@ public class Database {
 		try {
 			connect();
 			stm = connection.createStatement();
-			String sql = "select * from questions;";
+			String sql = "select * from questions order by datetime;";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
 				int id = rst.getInt("idqts");
@@ -224,25 +226,21 @@ public class Database {
 		}return messageSend;	
 	}
 
-	public boolean deleteMessage(int idmsg , int iduser) {
-		boolean messageDelete = true ;
+	public int deleteMessage(int idmsg , int iduser) {
+		int rows = 0 ;
 		try {
 			connect();
-			System.out.println("idmsg:" + idmsg);
-			System.out.println("iduser:" + iduser);
 			PreparedStatement ps;
 			ps = connection.prepareStatement("DELETE FROM inbox WHERE idmsg = ? and receiver = ? ;");
 			ps.setInt(1,idmsg);
 			ps.setInt(2,iduser);
-			ps.executeUpdate();
-			System.out.println("mesa stin delete message");
+			rows = ps.executeUpdate();
 			connect().close();		
-		} catch (SQLException e) {
-			messageDelete = false ;
+		} catch (SQLException e) {		
 			// TODO Auto-generated catch block
 			System.out.println("wrong execute statment.");		
 		}
-		return messageDelete;	
+		return rows;	
 	}
 
 	public boolean editQuestion(int idQts , String username , String newQ) {
@@ -251,7 +249,7 @@ public class Database {
 			connect();
 			PreparedStatement ps;
 			ps = connection.prepareStatement("UPDATE questions\r\n" + 
-					"SET senderQ = ?, question = ?\r\n" + 
+					"SET senderQ = ?, question = ? , datetime = CURRENT_TIMESTAMP \r\n" + 
 					"WHERE idqts = ? ;");
 			ps.setString(1,username);
 			ps.setString(2, newQ);
@@ -265,11 +263,11 @@ public class Database {
 		}
 		return question;
 	}
-	
-	
+
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////     Admin methods
-	
+
 	public boolean createUser(String username , String password) {
 		try {
 			connect();
@@ -287,22 +285,83 @@ public class Database {
 		}
 		return true ;
 	}
-		
-	public boolean executeQuery(String query) {
-		boolean userUpdate = true ;
+
+
+
+	public int getCredits(String username) {
+		int getCredits = 0;
 		try {
-			connect();
-			stm = connection.createStatement();
-			ResultSet rst = stm.executeQuery(query);
-			connect().close();		
+			PreparedStatement ps = connect().prepareStatement("Select credits from users where username = ? ; ");
+			ps.setString(1,username);
+			ResultSet rst = ps.executeQuery();	
+			while (rst.next()) {			
+				getCredits = rst.getInt("credits");
+			} connect().close();			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("wrong execute statment.");
-			userUpdate = false;
-		}
-		return userUpdate;
+		} 	  
+		return getCredits;
 	}
-	
+
+	public Date getDateTimeQuestion() {
+		Date date = null;
+		String queryDatetime = "Select datetime from questions order by datetime limit 1 ;";
+		try {
+			connect();
+			stm = connection.createStatement();
+			ResultSet rst = stm.executeQuery(queryDatetime);
+			while (rst.next()){
+				date = format.parse(rst.getString("datetime"));	
+			}		
+			connect().close();		
+		} catch (SQLException | ParseException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");		
+		}
+		return date;
+	}
+
+	public static LocalDateTime convertToLocalDateTimeViaSqlTimestamp(Date dateToConvert) {
+		return new java.sql.Timestamp(
+				dateToConvert.getTime()).toLocalDateTime();
+	}
+
+
+	public long checkTime() {
+		Date toDate = new Date();
+		Date fromDate = getDateTimeQuestion();
+		LocalDateTime fromDateTime = convertToLocalDateTimeViaSqlTimestamp(toDate);
+		LocalDateTime toDateTime = convertToLocalDateTimeViaSqlTimestamp(fromDate);
+		long hours = ChronoUnit.HOURS.between(toDateTime, fromDateTime);	
+		return hours;
+	}
+
+
+	public int getIdqts() {
+		int getIdqts = 0;
+		String queryIdqts = "Select idqts from questions order by datetime limit 1 ;";
+		try {
+			connect();
+			stm = connection.createStatement();
+			ResultSet rst = stm.executeQuery(queryIdqts);
+			while (rst.next()){
+				getIdqts = rst.getInt("idqts");	
+			}		
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");		
+		}
+		return getIdqts;
+
+	}
+
+
+
+
+
+
 
 }
 

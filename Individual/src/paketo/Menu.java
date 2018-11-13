@@ -2,6 +2,7 @@ package paketo;
 
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Menu {
@@ -54,12 +55,13 @@ public class Menu {
 
 	public void userMenu() {
 		User userR = login.createUserRole(user);
+		ArrayList<Message> messageList = new ArrayList<>();
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	
 			//Load all the messages of the user.
-			user = login.getUserInfo(user.getUserName());	
-			ArrayList<Message> messageList = db.getAllMessages(user.getId());	
+			int credits = db.getCredits(user.getUserName());
+			messageList = db.getAllMessages(user.getId());	
 			
 			int count = 0 ;
 			for (int index =0 ; index <messageList.size(); index++ ) {	
@@ -68,9 +70,7 @@ public class Menu {
 				}
 			}
 			int numbOfReadMsg = (messageList.size() - count);
-
-			// load all questions every time
-			db.getAllQuestions();
+			
 			System.out.println("\n\t\tUser Messages and Credits info.");
 			System.out.println("\t_______________________________________________________");		
 			System.out.printf("%-20s %1s %5s %5s %5s %n", "\t|Username" , "| Unread" , "| Read" , "| Total" , "| Credits |");
@@ -79,7 +79,7 @@ public class Menu {
 					,"|" ,  count 
 					,"|" ,  numbOfReadMsg
 					,"|" ,  messageList.size() 
-					,"|" , user.getCredits() + "    |");
+					,"|" ,  credits + "    |");
 			System.out.println("\t|___________________|________|______|_______|_________|");
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,13 +101,12 @@ public class Menu {
 			System.out.println("\t\tPRESS h - FOR HELP SECTION");
 			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
 
-
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
 				System.out.println(user);
-				userR.view(user.getId());
-
+				//userR.view(user.getId());
+				db.getAllQuestions();
 				break;
 			case "2":
 				//message read base on id of msg.
@@ -139,21 +138,17 @@ public class Menu {
 			case "4":
 				//edit a question.
 				if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
-					System.out.println("Plz give the id of the question you want to edit.");
-					String idQts = console.readLine();
-					try {
+					//check if the pass time is higher than 24 hours from the last edit question.
+					if (db.checkTime()>=24) {
+						System.out.println(db.checkTime()+" hours.");
 						System.out.println("Write the new question.");
 						String newQ = console.readLine();
-						userR.editQuestion(Integer.parseInt(idQts), user.getUserName() , newQ);
+						userR.editQuestion(db.getIdqts(), user.getUserName() , newQ);
 						filesWriter.keepActions(user.getUserName(),"Edit_Question");
-					} catch (NumberFormatException e) {
-						if(idQts.equals("") || idQts == null) {
-							System.out.println("You have entered empty input."); 
-						}  else {
-							System.out.println("You've entered non-intereger number.");
-						}
+					}else {
+						System.out.println("You cannot edit a question.");
+						System.out.println("The remaining time for change a question is " + (24-db.checkTime()) +" hours.");
 					}
-
 				}else {
 					System.out.println("You provided wrong input. Hit e to exit");
 				}
@@ -227,7 +222,7 @@ public class Menu {
 			case "1":
 				System.out.println("__________________________________________________________________________________________");
 				userR.viewUsers();
-				System.out.println("|______________________________|_______________________|______________|___________________|");
+				System.out.println("|______________________________|______________________|_______________|___________________|");
 				break;	
 			case "2"://create user
 				System.out.println("Write a username for the user.");
