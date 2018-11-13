@@ -71,7 +71,7 @@ public class Login {
 				user.setRole(role);
 				user.setStatus(rst.getString("status"));
 				user.setCredits(rst.getInt("credits"));		
-				System.out.println("\n"+role);		
+				//System.out.println("\n"+role);		
 			} db.connect().close();			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

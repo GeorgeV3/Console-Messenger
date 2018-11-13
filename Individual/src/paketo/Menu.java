@@ -1,6 +1,8 @@
 package paketo;
 
 import java.io.Console;
+import java.util.ArrayList;
+
 
 public class Menu {
 
@@ -12,6 +14,8 @@ public class Menu {
 	public Menu() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	//local datetime
 
 	public void loginMenu() {
 
@@ -26,7 +30,7 @@ public class Menu {
 				System.out.println("\t\t\tFILL THE TEXT FIELDS");
 				String username = console.readLine("Username: ");
 				String password = new String(console.readPassword("Password: "));
-				//check that user has enter a username & password 
+				//check that user has enter username & password 
 				if (login.validateLogin(username , password)) {
 					//validate username & password by server  side 	
 					if(	login.validateServerLogin(username.trim() , password.trim())) {
@@ -53,6 +57,34 @@ public class Menu {
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	
+			//Load all the messages of the user.
+			user = login.getUserInfo(user.getUserName());	
+			ArrayList<Message> messageList = db.getAllMessages(user.getId());	
+			
+			int count = 0 ;
+			for (int index =0 ; index <messageList.size(); index++ ) {	
+			if (messageList.get(index).getStatus().equals("unread")) {
+				count ++;
+				}
+			}
+			int numbOfReadMsg = (messageList.size() - count);
+
+			// load all questions every time
+			db.getAllQuestions();
+			System.out.println("\n\t\tUser Messages and Credits info.");
+			System.out.println("\t_______________________________________________________");		
+			System.out.printf("%-20s %1s %5s %5s %5s %n", "\t|Username" , "| Unread" , "| Read" , "| Total" , "| Credits |");
+			System.out.println("\t|-------------------|--------|------|-------|---------|");
+			System.out.printf("%-20s %1s %4s %3s %3s %2s %3s %3s %9s %n","\t|" + user.getUserName() 
+					,"|" ,  count 
+					,"|" ,  numbOfReadMsg
+					,"|" ,  messageList.size() 
+					,"|" , user.getCredits() + "    |");
+			System.out.println("\t|___________________|________|______|_______|_________|");
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////////////////////
+
 			System.out.println("\n\nTell us what you want to do by pressing the right keys...");
 			System.out.println("\t\tPRESS 1 - FOR SEE THE QUESTIONS");
 			System.out.println("\t\tPRESS 2 - TO READ A SPECIFIC MESSAGE");
@@ -69,12 +101,13 @@ public class Menu {
 			System.out.println("\t\tPRESS h - FOR HELP SECTION");
 			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
 
+
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
 				System.out.println(user);
 				userR.view(user.getId());
-				db.getAllQuestions();
+
 				break;
 			case "2":
 				//message read base on id of msg.
@@ -100,7 +133,7 @@ public class Menu {
 				if (!user.getUserName().equals(receiver)) {
 					userR.send(receiver , user.getUserName(), message);
 				}else {
-					System.out.println("You cannot send a message to your self.");
+					System.out.println("You cannot send a message to yourself.");
 				}
 				break;
 			case "4":
@@ -192,9 +225,9 @@ public class Menu {
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
-				System.out.println("__________________________________________________________________________________");
+				System.out.println("__________________________________________________________________________________________");
 				userR.viewUsers();
-				System.out.println("|_______________________|_______________________|_______________|_________________|");
+				System.out.println("|______________________________|_______________________|______________|___________________|");
 				break;	
 			case "2"://create user
 				System.out.println("Write a username for the user.");
@@ -206,7 +239,8 @@ public class Menu {
 			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
 				String usernameDelete = console.readLine();
-				userR.deleteUser(usernameDelete);
+				String queryNameDelete = "DELETE FROM users WHERE username = " + usernameDelete + " ;";
+				userR.deleteUser(queryNameDelete);
 				break;		
 			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
@@ -224,22 +258,14 @@ public class Menu {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
 					String query ="UPDATE users SET username = '" + newUsername +"' WHERE username = '" + usernameUpdate + "';";
-					if(userR.updateUser(query)== true) {
-						System.out.println("Update successfull.");
-					}else {
-						System.out.println("Update fail something had gone wrong.");
-					}
+					userR.updateUser(query);
 					break;
 				}
 				if (h.equals("2")) {
 					System.out.println("Write the new password for the user.");
 					String newPassword = console.readLine();
 					String query ="UPDATE users SET password = '" + newPassword +"' WHERE username = '" + usernameUpdate + "';";
-					if(userR.updateUser(query)== true) {
-						System.out.println("Update successfull.");
-					}else {
-						System.out.println("Update fail something had gone wrong.");
-					}
+					userR.updateUser(query);
 					break;
 				}
 				if (h.equals("3")) {
@@ -249,11 +275,7 @@ public class Menu {
 					String newPassword = console.readLine();
 					String query ="UPDATE users SET username = '" + newUsername +"' , password = '" + newPassword + 
 							" WHERE username = '" + usernameUpdate + "';";
-					if(userR.updateUser(query)== true) {
-						System.out.println("Update successfull.");
-					}else {
-						System.out.println("Update fail something had gone wrong.");
-					}
+					userR.updateUser(query);
 					break;					
 				}
 			case "5"://assignRole

@@ -8,8 +8,6 @@ public class AdminRole extends User {
 
 	Database db = new Database();
 
-
-
 	//public void view(){}
 	public void createUser(String username , String password) {
 		if (db.createUser(username, password) == true) {
@@ -28,8 +26,13 @@ public class AdminRole extends User {
 					"WHERE username !=\"admin\";";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
-				System.out.println("|Username: "+rst.getString("username") + "  \t| Role: " + rst.getString("role") 
-				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status") + " |");
+				System.out.printf("%-30s | %-20s | %12s  | %19s %n"
+				,"|Username: "+rst.getString("username")
+				,"Role: " + rst.getString("role")
+				,"Credits: " + rst.getString("credits") 
+				,"Status: "+ rst.getString("status") + " |");
+//				System.out.println("|Username: "+rst.getString("username") + "       \t| Role: " + rst.getString("role") 
+//				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status") + " |");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -37,25 +40,18 @@ public class AdminRole extends User {
 	}
 
 	public void deleteUser(String username){
-		if (db.deleteUser(username) == true) {
+		if (db.executeUpdate(username) == true) {
 			System.out.println("User delete successfull.");
 		}else {
 			System.out.println("Something has gone wrong.");
 		}
 	}
-	public boolean updateUser(String query){
-		boolean userUpdate = true ;
-		try {
-			db.connect();
-			Statement stm = db.connect().createStatement();
-			stm.executeUpdate(query);
-			db.connect().close();		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-			userUpdate = false;
-		}
-			return userUpdate;
+	public void updateUser(String query){
+		if (db.executeUpdate(query) == true){
+			System.out.println("Update successfull.");
+		}else {
+			System.out.println("Update fail something had gone wrong.");
+		}	
 	}
 
 	public void assignRole(String query){

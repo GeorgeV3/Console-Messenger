@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class Database {
 
@@ -37,6 +36,21 @@ public class Database {
 			System.out.println("Problem with conection on server/database.");
 			return null;
 		}
+	}
+	
+	public boolean executeUpdate(String query){
+		boolean execute = true ;
+		try {
+			connect();
+			Statement stm = connect().createStatement();
+			stm.executeUpdate(query);
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+			execute = false;
+		}
+			return execute;
 	}
 
 
@@ -91,24 +105,24 @@ public class Database {
 		} return messageList;
 	}
 
-	public int countStatusMessages(int iduser , String status) {
-		int countStatus = 0;
-		try {
-			connect();
-			PreparedStatement ps;
-			ps = connection.prepareStatement("Select count(status) from inbox where receiver = ? and status = 'unread';");
-			ps.setInt(1,iduser);
-			ps.setString(2, status);
-			ResultSet rst = ps.executeQuery();
-			while (rst.next()) {
-				countStatus = rst.getInt("count(status)");
-			}connect().close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-		}
-		return countStatus;
-	}
+//	public int countStatusMessages(int iduser , String status) {
+//		int countStatus = 0;
+//		try {
+//			connect();
+//			PreparedStatement ps;
+//			ps = connection.prepareStatement("Select count(status) from inbox where receiver = ? and status = ? ;");
+//			ps.setInt(1,iduser);
+//			ps.setString(2, status);
+//			ResultSet rst = ps.executeQuery();
+//			while (rst.next()) {
+//				countStatus = rst.getInt("count(status)");
+//			}connect().close();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println("wrong execute statment.");
+//		}
+//		return countStatus;
+//	}
 
 	public boolean checkIfExistUser(String username) {
 		try {
@@ -146,7 +160,7 @@ public class Database {
 				String question = rst.getString("question");
 				Date date = format.parse(rst.getString("datetime"));
 				String datetime = dformat.format(date);
-				System.out.println("ID: " + id +"  Question: "+ question +"\nFrom: "+ senderQ + 
+				System.out.println("\n\nID: " + id +"  Question: "+ question +"\nFrom: "+ senderQ + 
 						" Date: " + datetime );
 			}connect().close();
 		} catch (SQLException | ParseException e) {
@@ -155,6 +169,8 @@ public class Database {
 			System.out.println("wrong execute statment.");
 		}
 	}
+
+
 
 	public void updateCredits(String username) {	
 		try {
@@ -271,24 +287,7 @@ public class Database {
 		}
 		return true ;
 	}
-	
-	public boolean deleteUser(String username){
-		boolean userDelete = true ;
-		try {
-			connect();
-			PreparedStatement ps;
-			ps = connection.prepareStatement("DELETE FROM users WHERE username = ? ;");
-			ps.setString(1,username);
-			ps.executeUpdate();
-			connect().close();		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-			userDelete = false;
-		}
-		return userDelete;
-	}
-	
+		
 	public boolean executeQuery(String query) {
 		boolean userUpdate = true ;
 		try {
@@ -304,26 +303,6 @@ public class Database {
 		return userUpdate;
 	}
 	
-	public boolean executeUpdate(String query){
-		boolean execute = true ;
-		try {
-			connect();
-			Statement stm = connect().createStatement();
-			stm.executeUpdate(query);
-			connect().close();		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-			execute = false;
-		}
-			return execute;
-	}
-	
-
-
-
-
-
 
 }
 

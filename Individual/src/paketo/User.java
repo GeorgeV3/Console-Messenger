@@ -37,6 +37,7 @@ public class User {
 		if(database.sendMessage(receiver, sender, message) == true) {
 			System.out.println("Message send.");
 			filesWriter.keepMessages(sender, receiver, message);
+			if (!sender.equals("admin"))
 			database.updateCredits(sender);
 		}else {
 			System.out.printf("Message fail to send it.\nNo user with name %1$s exist.", receiver);
@@ -48,8 +49,7 @@ public class User {
 	public void createUser(String username , String password){}
 	public void viewUsers(){}
 	public void deleteUser(String username){}
-	public boolean updateUser(String query){
-		return false;}
+	public void updateUser(String query){}
 	public void assignRole(String query){}
 
 	public User() {}
