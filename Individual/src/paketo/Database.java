@@ -40,19 +40,19 @@ public class Database {
 		}
 	}
 
-	public boolean executeUpdate(String query){
-		boolean execute = true ;
+	public int executeUpdate(String query){
+		int rows = 0;	
 		try {
 			connect();
 			Statement stm = connect().createStatement();
-			stm.executeUpdate(query);
+			rows = stm.executeUpdate(query);
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("wrong execute statment.");
-			execute = false;
+			
 		}
-		return execute;
+		return rows;
 	}
 
 
@@ -126,29 +126,29 @@ public class Database {
 	//		return countStatus;
 	//	}
 
-	public boolean checkIfExistUser(String username) {
-		try {
-			connect();
-			PreparedStatement ps;
-			ps = connection.prepareStatement("Select username from users where username = ?;");
-			ps.setString(1,username);
-			ResultSet rst = ps.executeQuery();
-			//while (rst.next()) {
-			String userName = rst.getString("username");
-			//}	
-			connect().close();
-			if (username.equals(userName)) {
-				System.out.println("Message send it.");
-				return true;
-			}else {
-				System.out.printf("Message fail to send it.\nNo user with name %1$s exist in database.",username);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-		}
-		return false;		
-	}
+//	public boolean checkIfExistUser(String username) {
+//		try {
+//			connect();
+//			PreparedStatement ps;
+//			ps = connection.prepareStatement("Select username from users where username = ?;");
+//			ps.setString(1,username);
+//			ResultSet rst = ps.executeQuery();
+//			//while (rst.next()) {
+//			String userName = rst.getString("username");
+//			//}	
+//			connect().close();
+//			if (username.equals(userName)) {
+//				System.out.println("Message send it.");
+//				return true;
+//			}else {
+//				System.out.printf("Message fail to send it.\nNo user with name %1$s exist in database.",username);
+//			}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println("wrong execute statment.");
+//		}
+//		return false;		
+//	}
 
 	public void getAllQuestions() {
 		try {
@@ -264,7 +264,6 @@ public class Database {
 		return question;
 	}
 
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////     Admin methods
 
@@ -326,8 +325,7 @@ public class Database {
 		return new java.sql.Timestamp(
 				dateToConvert.getTime()).toLocalDateTime();
 	}
-
-
+	
 	public long checkTime() {
 		Date toDate = new Date();
 		Date fromDate = getDateTimeQuestion();
@@ -336,7 +334,6 @@ public class Database {
 		long hours = ChronoUnit.HOURS.between(toDateTime, fromDateTime);	
 		return hours;
 	}
-
 
 	public int getIdqts() {
 		int getIdqts = 0;
@@ -356,12 +353,6 @@ public class Database {
 		return getIdqts;
 
 	}
-
-
-
-
-
-
 
 }
 

@@ -49,8 +49,8 @@ public class User {
 	public void createUser(String username , String password){}
 	public void viewUsers(){}
 	public void deleteUser(String username){}
-	public void updateUser(String query){}
-	public void assignRole(String query){}
+	public void updateUser(String query , String usernameInput){}
+	public void assignRole(String query , String usernameInput){}
 
 	public User() {}
 	public User(int id, String userName, String userPassword, String status, String role, int credits) {

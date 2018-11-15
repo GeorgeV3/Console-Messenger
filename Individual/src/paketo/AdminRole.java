@@ -1,10 +1,10 @@
 package paketo;
 
+
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
-public class AdminRole extends User {
+public class AdminRole extends DeleteRole {
 
 	Database db = new Database();
 
@@ -26,13 +26,11 @@ public class AdminRole extends User {
 					"WHERE username !=\"admin\";";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
-				System.out.printf("%-30s | %-20s | %12s  | %19s %n"
+				System.out.printf("%-30s | %-20s | %12s  | %-19s|%n"
 				,"|Username: "+rst.getString("username")
 				,"Role: " + rst.getString("role")
 				,"Credits: " + rst.getString("credits") 
-				,"Status: "+ rst.getString("status") + " |");
-//				System.out.println("|Username: "+rst.getString("username") + "       \t| Role: " + rst.getString("role") 
-//				+ "    \t| Credits: " + rst.getString("credits") +"  \t| Status: "+ rst.getString("status") + " |");
+				,"Status: "+ rst.getString("status") );
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -40,25 +38,28 @@ public class AdminRole extends User {
 	}
 
 	public void deleteUser(String username){
-		if (db.executeUpdate(username) == true) {
+		if (db.executeUpdate(username) > 0) {
 			System.out.println("User delete successfull.");
 		}else {
-			System.out.println("Something has gone wrong.");
+			System.out.println("User did not delete , propably you give wrong username.");
 		}
 	}
-	public void updateUser(String query){
-		if (db.executeUpdate(query) == true){
+	public void updateUser(String query , String usernameInput){
+		if (db.executeUpdate(query) > 0){
 			System.out.println("Update successfull.");
 		}else {
 			System.out.println("Update fail something had gone wrong.");
+			System.out.println("Check your inputs if you write the currect "
+					+ "username : "+ usernameInput +" that you want to change.");
 		}	
 	}
 
-	public void assignRole(String query){
-		if (db.executeUpdate(query)==true) {
+	public void assignRole(String query , String usernameInput){
+		if (db.executeUpdate(query) > 0) {
 			System.out.println("Assign Role succefull.");
 		}else {
 			System.out.println("Assign role fail , something had gone wrong.");
+			System.out.println("Assign role fail , propably you give wrong username: "+ usernameInput +".");
 		}
 	}
 

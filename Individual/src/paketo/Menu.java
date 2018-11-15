@@ -16,7 +16,6 @@ public class Menu {
 		// TODO Auto-generated constructor stub
 	}
 	
-	//local datetime
 
 	public void loginMenu() {
 
@@ -62,22 +61,23 @@ public class Menu {
 			//Load all the messages of the user.
 			int credits = db.getCredits(user.getUserName());
 			messageList = db.getAllMessages(user.getId());	
-			
-			int count = 0 ;
+			// get unread messages
+			int unread = 0 ;
 			for (int index =0 ; index <messageList.size(); index++ ) {	
 			if (messageList.get(index).getStatus().equals("unread")) {
-				count ++;
+				unread ++;
 				}
 			}
-			int numbOfReadMsg = (messageList.size() - count);
+			// get read messages
+			int read = (messageList.size() - unread);
 			
 			System.out.println("\n\t\tUser Messages and Credits info.");
 			System.out.println("\t_______________________________________________________");		
 			System.out.printf("%-20s %1s %5s %5s %5s %n", "\t|Username" , "| Unread" , "| Read" , "| Total" , "| Credits |");
 			System.out.println("\t|-------------------|--------|------|-------|---------|");
 			System.out.printf("%-20s %1s %4s %3s %3s %2s %3s %3s %9s %n","\t|" + user.getUserName() 
-					,"|" ,  count 
-					,"|" ,  numbOfReadMsg
+					,"|" ,  unread 
+					,"|" ,  read
 					,"|" ,  messageList.size() 
 					,"|" ,  credits + "    |");
 			System.out.println("\t|___________________|________|______|_______|_________|");
@@ -128,9 +128,11 @@ public class Menu {
 				String message=console.readLine();
 				System.out.println("Write the name of the receiver.");
 				String receiver=console.readLine();
+				//get a correct input
+				String receiver2 = login.getCorrectInput(4,12,receiver);
 				System.out.println(user.getUserName());
-				if (!user.getUserName().equals(receiver)) {
-					userR.send(receiver , user.getUserName(), message);
+				if (!user.getUserName().equals(receiver2)) {
+					userR.send(receiver2 , user.getUserName(), message);
 				}else {
 					System.out.println("You cannot send a message to yourself.");
 				}
@@ -157,9 +159,9 @@ public class Menu {
 				//delete message base on id msg
 				if (user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
 					System.out.println("Plz provide an id of message you want to delete.");
-					String idMsgD = console.readLine();
-					Integer.parseInt(idMsgD);
+					String idMsgD = console.readLine();	
 					try {
+						Integer.parseInt(idMsgD);
 						userR.deleteMessage(Integer.parseInt(idMsgD) , user.getId());
 						filesWriter.keepActions(user.getUserName(),"Delete_Message");
 					} catch (NumberFormatException e) {
@@ -220,16 +222,19 @@ public class Menu {
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
-				System.out.println("__________________________________________________________________________________________");
+				System.out.println("___________________________________________________________________________________________");
 				userR.viewUsers();
-				System.out.println("|______________________________|______________________|_______________|___________________|");
+				System.out.println("|______________________________|______________________|_______________|____________________|");
 				break;	
 			case "2"://create user
 				System.out.println("Write a username for the user.");
 				String username = console.readLine();
+				// get correct inputs for username & password
+				String name = login.getCorrectInput(4,12,username);
 				System.out.println("Write a password for the user.");
 				String password = console.readLine();
-				userR.createUser(username , password);
+				String pass = login.getCorrectInput(4,12,password);
+				userR.createUser(name , pass);
 				break;			
 			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
@@ -239,7 +244,7 @@ public class Menu {
 				break;		
 			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
-				String usernameUpdate = console.readLine();
+				String usernameToUpdate = console.readLine();
 				System.out.println("");
 				System.out.println("Press 1 for change username Or "
 						+ "2 for change password Or 3 for change both.\n\t Or press e to Exit");
@@ -252,15 +257,15 @@ public class Menu {
 				if (h.equals("1")) {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
-					String query ="UPDATE users SET username = '" + newUsername +"' WHERE username = '" + usernameUpdate + "';";
-					userR.updateUser(query);
+					String query ="UPDATE users SET username = '" + newUsername +"' WHERE username = '" + usernameToUpdate + "';";
+					userR.updateUser(query , usernameToUpdate);
 					break;
 				}
 				if (h.equals("2")) {
 					System.out.println("Write the new password for the user.");
 					String newPassword = console.readLine();
-					String query ="UPDATE users SET password = '" + newPassword +"' WHERE username = '" + usernameUpdate + "';";
-					userR.updateUser(query);
+					String query ="UPDATE users SET password = '" + newPassword +"' WHERE username = '" + usernameToUpdate + "';";
+					userR.updateUser(query , usernameToUpdate);
 					break;
 				}
 				if (h.equals("3")) {
@@ -269,13 +274,13 @@ public class Menu {
 					System.out.println("Write the new password for the user.");
 					String newPassword = console.readLine();
 					String query ="UPDATE users SET username = '" + newUsername +"' , password = '" + newPassword + 
-							" WHERE username = '" + usernameUpdate + "';";
-					userR.updateUser(query);
+							" WHERE username = '" + usernameToUpdate + "';";
+					userR.updateUser(query , usernameToUpdate);
 					break;					
 				}
 			case "5"://assignRole
 				System.out.println("Write the name of the user who want to change a Role.");
-				String usernameAssign = console.readLine();
+				String usernameToAssign = console.readLine();
 				System.out.println("Press 1 for assign to EditRole "
 						+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\n\t Or press e to Exit");
 				String h2 = console.readLine();
@@ -284,17 +289,15 @@ public class Menu {
 							+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\\n\\t Or press e to Exit");
 					h2 = console.readLine();
 				}if (h2.equals("1")) {
-					String query ="UPDATE users SET role ='EditRole' where username = '" + usernameAssign +"';";
-					userR.assignRole(query);
+					String query ="UPDATE users SET role ='EditRole' where username = '" + usernameToAssign +"';";
+					userR.assignRole(query , usernameToAssign);
 				}
 				if (h2.equals("2")) {
-					String query ="UPDATE users SET role ='DeleteRole' where username = '" + usernameAssign +"';";
-					userR.assignRole(query);
-				}
+					String query ="UPDATE users SET role ='DeleteRole' where username = '" + usernameToAssign +"';";
+					userR.assignRole(query , usernameToAssign);				}
 				if (h2.equals("3")) {
-					String query ="UPDATE users SET role ='NoRole' where username = '" + usernameAssign +"';";
-					userR.assignRole(query);
-				}
+					String query ="UPDATE users SET role ='NoRole' where username = '" + usernameToAssign +"';";
+					userR.assignRole(query , usernameToAssign);				}
 				break;		
 			case "r":
 				userMenu();

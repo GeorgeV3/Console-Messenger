@@ -1,8 +1,10 @@
 package paketo;
 
+import java.io.Console;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class Login {
 
@@ -94,6 +96,17 @@ public class Login {
 			user = new DeleteRole();
 		}
 		return user;
+	}
+
+	//!name.matches("[a-zA-Z0-9]+") ||
+	public String getCorrectInput(int min , int max , String input) {
+		Console console2 = System.console();	
+		while(input.length() < min || input.length() > max || input.contains(" ")){
+			System.out.println("Please enter a valid input!" +
+					"\nAny char between rage "+ min + "-" + max + " .!");
+			input = console2.readLine();		
+		}	
+		return input;
 	}
 
 
