@@ -31,13 +31,12 @@ public class Login {
 		try {
 			db.connect();
 			PreparedStatement ps;
-			ps = db.connect().prepareStatement("Select username , password from users where username = ? and password = ? ;");
+			ps = db.connect().prepareStatement("Select username ,CAST(AES_DECRYPT(password, 'secret') AS CHAR(30)) pwrd from users where username = ? ;");
 			ps.setString(1,username);
-			ps.setString(2, password);
 			ResultSet rst = ps.executeQuery();
 			while (rst.next()) {
 				user = rst.getString("username");
-				pass = rst.getString("password");
+				pass = rst.getString("pwrd");
 			}db.connect().close();	 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -83,22 +82,22 @@ public class Login {
 	}
 
 	public User createUserRole(User user) { 
-		if (user.getRole() != null && user.getRole().equals("Admin")) {
+		if (user.getRole() != null && "Admin".equalsIgnoreCase(user.getRole())) {
 			//System.out.print("mesa stin if tou create admin");
 			user = new AdminRole();
 		}
-		if (user.getRole() != null && user.getRole().equals("EditRole")) {
+		if (user.getRole() != null && "EditRole".equalsIgnoreCase(user.getRole())) {
 			//System.out.print("mesa stin if tou create editorle");
 			user = new EditRole();
 		}
-		if (user.getRole() != null && user.getRole().equals("DeleteRole")) {
+		if (user.getRole() != null && "DeleteRole".equalsIgnoreCase(user.getRole())) {
 			//System.out.print("mesa stin if tou create deleterole");
 			user = new DeleteRole();
 		}
 		return user;
 	}
 
-	//!name.matches("[a-zA-Z0-9]+") ||
+	//!input.matches("[a-zA-Z0-9]+") ||
 	public String getCorrectInput(int min , int max , String input) {
 		Console console2 = System.console();	
 		while(input.length() < min || input.length() > max || input.contains(" ")){

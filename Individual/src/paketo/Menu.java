@@ -15,7 +15,7 @@ public class Menu {
 	public Menu() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 
 	public void loginMenu() {
 
@@ -64,22 +64,22 @@ public class Menu {
 			// get unread messages
 			int unread = 0 ;
 			for (int index =0 ; index <messageList.size(); index++ ) {	
-			if (messageList.get(index).getStatus().equals("unread")) {
-				unread ++;
+				if (messageList.get(index).getStatus().equals("unread")) {
+					unread ++;
 				}
 			}
 			// get read messages
 			int read = (messageList.size() - unread);
-			
+
 			System.out.println("\n\t\tUser Messages and Credits info.");
 			System.out.println("\t_______________________________________________________");		
 			System.out.printf("%-20s %1s %5s %5s %5s %n", "\t|Username" , "| Unread" , "| Read" , "| Total" , "| Credits |");
 			System.out.println("\t|-------------------|--------|------|-------|---------|");
 			System.out.printf("%-20s %1s %4s %3s %3s %2s %3s %3s %9s %n","\t|" + user.getUserName() 
-					,"|" ,  unread 
-					,"|" ,  read
-					,"|" ,  messageList.size() 
-					,"|" ,  credits + "    |");
+			,"|" ,  unread 
+			,"|" ,  read
+			,"|" ,  messageList.size() 
+			,"|" ,  credits + "    |");
 			System.out.println("\t|___________________|________|______|_______|_________|");
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,14 +88,14 @@ public class Menu {
 			System.out.println("\n\nTell us what you want to do by pressing the right keys...");
 			System.out.println("\t\tPRESS 1 - FOR SEE THE QUESTIONS");
 			System.out.println("\t\tPRESS 2 - TO READ A SPECIFIC MESSAGE");
-			System.out.println("\t\tPRESS 3 - TO SEND A MESSAGE\t\t\t");	
-			if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
+			System.out.println("\t\tPRESS 3 - TO SEND A MESSAGE");	
+			if ("EditRole".equalsIgnoreCase(user.getRole()) || "DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
 				System.out.println("\t\tPRESS 4 - TO EDIT A QUESTION");
 			}
-			if (user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
+			if ("DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
 				System.out.println("\t\tPRESS 5 - TO DELETE A MESSAGE");
 			}
-			if (user.getRole().equals("Admin")) {
+			if ("Admin".equalsIgnoreCase(user.getRole())) {
 				System.out.println("\t\tPRESS a - TO CHANGE TO SUPER ADMIN MENU");
 			}
 			System.out.println("\t\tPRESS h - FOR HELP SECTION");
@@ -104,8 +104,7 @@ public class Menu {
 			ch  = console.readLine();
 			switch (ch) {
 			case "1":
-				System.out.println(user);
-				//userR.view(user.getId());
+				//View the questions.
 				db.getAllQuestions();
 				break;
 			case "2":
@@ -129,22 +128,25 @@ public class Menu {
 				System.out.println("Write the name of the receiver.");
 				String receiver=console.readLine();
 				//get a correct input
-				String receiver2 = login.getCorrectInput(4,12,receiver);
+				//String receiver2 = login.getCorrectInput(4,12,receiver);
 				System.out.println(user.getUserName());
-				if (!user.getUserName().equals(receiver2)) {
-					userR.send(receiver2 , user.getUserName(), message);
+				if (!user.getUserName().equals(receiver)) {
+					userR.send(receiver , user.getUserName(), message);
 				}else {
 					System.out.println("You cannot send a message to yourself.");
 				}
 				break;
 			case "4":
 				//edit a question.
-				if (user.getRole().equals("EditRole") || user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
+				if ("EditRole".equalsIgnoreCase(user.getRole()) || "DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
 					//check if the pass time is higher than 24 hours from the last edit question.
 					if (db.checkTime()>=24) {
-						System.out.println(db.checkTime()+" hours.");
-						System.out.println("Write the new question.");
+						//Hours from the last question chnage
+						//System.out.println(db.checkTime()+" hours.");
+						System.out.println("\nWrite the new question.");
 						String newQ = console.readLine();
+						// thelei ftiaksimo to keno
+						//String newQ2 = login.getCorrectInput(10,250, newQ);
 						userR.editQuestion(db.getIdqts(), user.getUserName() , newQ);
 						filesWriter.keepActions(user.getUserName(),"Edit_Question");
 					}else {
@@ -157,7 +159,7 @@ public class Menu {
 				break;
 			case "5":
 				//delete message base on id msg
-				if (user.getRole().equals("DeleteRole") || user.getRole().equals("Admin")) {
+				if ("DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
 					System.out.println("Plz provide an id of message you want to delete.");
 					String idMsgD = console.readLine();	
 					try {
@@ -175,8 +177,8 @@ public class Menu {
 					System.out.println("You provided wrong input. Hit e to exit");
 				}
 				break;
-			case "a"://join to admin menu.
-				if (user.getRole().equals("Admin")) {
+			case "a"://change to admin menu.
+				if ("Admin".equalsIgnoreCase(user.getRole())) {
 					adminMenu();
 				}else {
 					System.out.println("You provided wrong input. Hit e to exit");
@@ -239,8 +241,8 @@ public class Menu {
 			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
 				String usernameDelete = console.readLine();
-				String queryNameDelete = "DELETE FROM users WHERE username = " + usernameDelete + " ;";
-				userR.deleteUser(queryNameDelete);
+
+				userR.deleteUser(usernameDelete);
 				break;		
 			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
@@ -254,50 +256,50 @@ public class Menu {
 							+ "2 for password Or 3 for both.\n\t Or e to Exit");
 					h = console.readLine();
 				}
+				//Thelei fitaksimo ta aftakia!!!
 				if (h.equals("1")) {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
-					String query ="UPDATE users SET username = '" + newUsername +"' WHERE username = '" + usernameToUpdate + "';";
-					userR.updateUser(query , usernameToUpdate);
+					String newUsername2 = login.getCorrectInput(4, 12, newUsername);
+					userR.updateUser(1 ,newUsername2,"", usernameToUpdate);
 					break;
 				}
 				if (h.equals("2")) {
 					System.out.println("Write the new password for the user.");
 					String newPassword = console.readLine();
-					String query ="UPDATE users SET password = '" + newPassword +"' WHERE username = '" + usernameToUpdate + "';";
-					userR.updateUser(query , usernameToUpdate);
+					String newPassword2 = login.getCorrectInput(4, 12, newPassword);
+					userR.updateUser(2 ,"", newPassword2 ,usernameToUpdate);
 					break;
 				}
 				if (h.equals("3")) {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
+					String newUsername2 = login.getCorrectInput(4, 12, newUsername);
 					System.out.println("Write the new password for the user.");
 					String newPassword = console.readLine();
-					String query ="UPDATE users SET username = '" + newUsername +"' , password = '" + newPassword + 
-							" WHERE username = '" + usernameToUpdate + "';";
-					userR.updateUser(query , usernameToUpdate);
+					String newPassword2 = login.getCorrectInput(4, 12, newPassword);				
+					userR.updateUser(3 , newUsername2 , newPassword2 , usernameToUpdate);
 					break;					
 				}
 			case "5"://assignRole
-				System.out.println("Write the name of the user who want to change a Role.");
+				System.out.println("Write the username of the user who want to change a Role.");
 				String usernameToAssign = console.readLine();
-				System.out.println("Press 1 for assign to EditRole "
-						+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\n\t Or press e to Exit");
+				System.out.println("Press 1 for assign to Edit Role "
+						+ "Or 2 for assign to Delete Role Or 3 for assign to No Role.\n\t Or press e to Exit");
 				String h2 = console.readLine();
 				while (!h2.equals("1") && !h2.equals("2") && (!h2.equals("3")) && !h2.equals("e")) {
-					System.out.println("please provide VALID  argument. 1 for assign to EditRole "
-							+ "Or 2 for assign to DeleteRole Or 3 for assign to NoRole.\\n\\t Or press e to Exit");
+					System.out.println("please provide VALID  argument. 1 for assign to Edit Role "
+							+ "Or 2 for assign to Delete Role Or 3 for assign to No Role.\\n\\t Or press e to Exit");
 					h2 = console.readLine();
-				}if (h2.equals("1")) {
-					String query ="UPDATE users SET role ='EditRole' where username = '" + usernameToAssign +"';";
-					userR.assignRole(query , usernameToAssign);
+				}if (h2.equals("1")) {	
+					userR.assignRole(1 , usernameToAssign);
 				}
-				if (h2.equals("2")) {
-					String query ="UPDATE users SET role ='DeleteRole' where username = '" + usernameToAssign +"';";
-					userR.assignRole(query , usernameToAssign);				}
+				if (h2.equals("2")) {				
+					userR.assignRole(2 , usernameToAssign);		
+				}
 				if (h2.equals("3")) {
-					String query ="UPDATE users SET role ='NoRole' where username = '" + usernameToAssign +"';";
-					userR.assignRole(query , usernameToAssign);				}
+					userR.assignRole(3 , usernameToAssign);		
+				}
 				break;		
 			case "r":
 				userMenu();

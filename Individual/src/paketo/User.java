@@ -37,8 +37,16 @@ public class User {
 		if(database.sendMessage(receiver, sender, message) == true) {
 			System.out.println("Message send.");
 			filesWriter.keepMessages(sender, receiver, message);
-			if (!sender.equals("admin"))
+			if (!"admin".equalsIgnoreCase(sender))
 			database.updateCredits(sender);
+			int currentCredits = database.getCredits(sender);
+			//System.out.println(currentCredits);
+			if ( currentCredits == 10) {
+				database.autoMsgToAdmin(receiver, sender, currentCredits);
+			} else if (currentCredits == 20) {
+				database.autoMsgToAdmin(receiver, sender, currentCredits);
+			}
+			
 		}else {
 			System.out.printf("Message fail to send it.\nNo user with name %1$s exist.", receiver);
 		}
@@ -48,11 +56,12 @@ public class User {
 	public void deleteMessage(int idmsg , int iduser){}
 	public void createUser(String username , String password){}
 	public void viewUsers(){}
-	public void deleteUser(String username){}
-	public void updateUser(String query , String usernameInput){}
-	public void assignRole(String query , String usernameInput){}
+	public void deleteUser(String usernameInput){}
+	public void updateUser(int number , String newUsername , String newPassword , String usernameInput){}
+	public void assignRole(Integer number, String usernameInput){}
 
 	public User() {}
+	
 	public User(int id, String userName, String userPassword, String status, String role, int credits) {
 		super();
 		this.id = id;

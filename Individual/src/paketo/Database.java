@@ -19,6 +19,8 @@ public class Database {
 	public Database() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	//// user - test
 	private String url = "jdbc:mysql://localhost:3306/individualdb?useSSL=false";
 	private String usernameDb = "root";
 	private String passwordDb = "1234";
@@ -40,27 +42,11 @@ public class Database {
 		}
 	}
 
-	public int executeUpdate(String query){
-		int rows = 0;	
-		try {
-			connect();
-			Statement stm = connect().createStatement();
-			rows = stm.executeUpdate(query);
-			connect().close();		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-			
-		}
-		return rows;
-	}
-
-
 	public ArrayList<Message> getAllMessages(int iduser)  {
 		ArrayList<Message> messageList = new ArrayList<>();
 		try {
 			connect();
-			PreparedStatement ps = connection.prepareStatement("Select * from inbox where receiver = ?");
+			PreparedStatement ps = connect().prepareStatement("Select * from inbox where receiver = ?");
 			ps.setInt(1,iduser);
 			ResultSet rst = ps.executeQuery();
 			while (rst.next()) {
@@ -85,7 +71,7 @@ public class Database {
 		ArrayList<Message> messageList = new ArrayList<>();
 		try {
 			connect();
-			PreparedStatement ps = connection.prepareStatement("Select * from inbox where idmsg = ? and receiver = ?;");
+			PreparedStatement ps = connect().prepareStatement("Select * from inbox where idmsg = ? and receiver = ?;");
 			ps.setInt(1,idmsg);
 			ps.setInt(2,iduser);
 			ResultSet rst = ps.executeQuery();
@@ -126,34 +112,34 @@ public class Database {
 	//		return countStatus;
 	//	}
 
-//	public boolean checkIfExistUser(String username) {
-//		try {
-//			connect();
-//			PreparedStatement ps;
-//			ps = connection.prepareStatement("Select username from users where username = ?;");
-//			ps.setString(1,username);
-//			ResultSet rst = ps.executeQuery();
-//			//while (rst.next()) {
-//			String userName = rst.getString("username");
-//			//}	
-//			connect().close();
-//			if (username.equals(userName)) {
-//				System.out.println("Message send it.");
-//				return true;
-//			}else {
-//				System.out.printf("Message fail to send it.\nNo user with name %1$s exist in database.",username);
-//			}
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			System.out.println("wrong execute statment.");
-//		}
-//		return false;		
-//	}
+	//	public boolean checkIfExistUser(String username) {
+	//		try {
+	//			connect();
+	//			PreparedStatement ps;
+	//			ps = connection.prepareStatement("Select username from users where username = ?;");
+	//			ps.setString(1,username);
+	//			ResultSet rst = ps.executeQuery();
+	//			//while (rst.next()) {
+	//			String userName = rst.getString("username");
+	//			//}	
+	//			connect().close();
+	//			if (username.equals(userName)) {
+	//				System.out.println("Message send it.");
+	//				return true;
+	//			}else {
+	//				System.out.printf("Message fail to send it.\nNo user with name %1$s exist in database.",username);
+	//			}
+	//		} catch (SQLException e) {
+	//			// TODO Auto-generated catch block
+	//			System.out.println("wrong execute statment.");
+	//		}
+	//		return false;		
+	//	}
 
 	public void getAllQuestions() {
 		try {
 			connect();
-			stm = connection.createStatement();
+			stm = connect().createStatement();
 			String sql = "select * from questions order by datetime;";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
@@ -174,44 +160,12 @@ public class Database {
 
 
 
-	public void updateCredits(String username) {	
-		try {
-			connect();
-			PreparedStatement ps;
-			ps = connection.prepareStatement("UPDATE users SET credits = credits + 1  WHERE  username = ? ; ");
-			ps.setString(1 , username);
-			ps.executeUpdate();
-			connect().close();		
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");	
-		}
-	}
-
-	public boolean changeStatus(String username , String status) {
-		try {
-			connect();
-			PreparedStatement ps;
-			ps = connection.prepareStatement("UPDATE users SET status = ?  WHERE  username = ? ; ");
-			ps.setString(1 , status);
-			ps.setString(2, username);
-			ps.executeUpdate();
-			connect().close();
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");	
-		}
-		return true;
-	}
-
 	public boolean sendMessage (String receiver , String sender , String message ) {
 		boolean messageSend = true;
 		try {
 			connect();
 			PreparedStatement ps;
-			ps = connection.prepareStatement("INSERT INTO inbox (receiver, sender , message) "
+			ps = connect().prepareStatement("INSERT INTO inbox (receiver, sender , message) "
 					+ "VALUES ((SELECT iduser FROM users WHERE username = ?)"
 					+ ",?,?);");
 			ps.setString(1,receiver);
@@ -231,7 +185,7 @@ public class Database {
 		try {
 			connect();
 			PreparedStatement ps;
-			ps = connection.prepareStatement("DELETE FROM inbox WHERE idmsg = ? and receiver = ? ;");
+			ps = connect().prepareStatement("DELETE FROM inbox WHERE idmsg = ? and receiver = ? ;");
 			ps.setInt(1,idmsg);
 			ps.setInt(2,iduser);
 			rows = ps.executeUpdate();
@@ -248,7 +202,7 @@ public class Database {
 		try {
 			connect();
 			PreparedStatement ps;
-			ps = connection.prepareStatement("UPDATE questions\r\n" + 
+			ps = connect().prepareStatement("UPDATE questions\r\n" + 
 					"SET senderQ = ?, question = ? , datetime = CURRENT_TIMESTAMP \r\n" + 
 					"WHERE idqts = ? ;");
 			ps.setString(1,username);
@@ -271,8 +225,7 @@ public class Database {
 		try {
 			connect();
 			PreparedStatement ps;
-			ps = connection.prepareStatement("INSERT INTO users (username , password)\r\n" + 
-					"VALUES (?,?);");
+			ps = connect().prepareStatement("INSERT INTO users (username, password) VALUES (?, AES_ENCRYPT(? , 'secret'));");
 			ps.setString(1,username);
 			ps.setString(2, password);
 			ps.executeUpdate();
@@ -285,6 +238,122 @@ public class Database {
 		return true ;
 	}
 
+	public int deleteUser(String usernameInput) {
+		int rows = 0 ;
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connect().prepareStatement("DELETE FROM users WHERE username = ? ;");
+			ps.setString(1,usernameInput);		
+			rows = ps.executeUpdate();
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+		}
+		return rows;
+	}
+
+	public int updateUser(int number , String newUsername , String newPassword , String usernameInput) {
+		int rows = 0 ;
+		try {
+			connect();
+			if (number == 1) {
+				PreparedStatement ps1;
+				ps1 =connect().prepareStatement("UPDATE users SET username = ? WHERE username = ? ;");
+				ps1.setString(1, newUsername);
+				ps1.setString(2, usernameInput);
+				rows = ps1.executeUpdate();
+			}		
+			if (number == 2) {
+				PreparedStatement ps2;
+				ps2 =connect().prepareStatement("UPDATE users SET password = ? WHERE username = ? ;");
+				ps2.setString(1,newPassword);	
+				ps2.setString(2, usernameInput);
+				rows = ps2.executeUpdate();
+			}	
+			if (number == 3) {
+				PreparedStatement ps3;
+				ps3 =connect().prepareStatement("UPDATE users SET username = ? , password = ?  WHERE username = ? ; ");
+				ps3.setString(1,newUsername);	
+				ps3.setString(2,newPassword);	
+				ps3.setString(3,usernameInput);	
+				rows = ps3.executeUpdate();
+			}
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+		}
+		return rows;
+	}
+
+	public int assignRole(int number , String usernameInput) {
+		int rows = 0 ;
+		try {
+			connect();
+			if (number == 1) {
+				PreparedStatement ps1;
+				ps1 =connect().prepareStatement("UPDATE users SET role ='EditRole' where username = ? ;");
+				ps1.setString(1,usernameInput);		
+				rows = ps1.executeUpdate();
+			}		
+			if (number == 2) {
+				PreparedStatement ps2;
+				ps2 =connect().prepareStatement("UPDATE users SET role ='DeleteRole' where username = ? ;");
+				ps2.setString(1,usernameInput);		
+				rows = ps2.executeUpdate();
+			}	
+			if (number == 3) {
+				PreparedStatement ps3;
+				ps3 =connect().prepareStatement("UPDATE users SET role ='NoRole' where username = ? ;");
+				ps3.setString(1,usernameInput);		
+				rows = ps3.executeUpdate();
+			}
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");
+		}
+		return rows;
+	}
+
+	////////////////////////////////////////////////
+	///////////////////////////////////////////////
+	//////////////////////////////////////////////
+	//General methods
+
+	public void updateCredits(String username) {	
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connect().prepareStatement("UPDATE users SET credits = credits + 1  WHERE  username = ? ; ");
+			ps.setString(1 , username);
+			ps.executeUpdate();
+			connect().close();		
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");	
+		}
+	}
+
+	public boolean changeStatus(String username , String status) {
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connect().prepareStatement("UPDATE users SET status = ?  WHERE  username = ? ; ");
+			ps.setString(1 , status);
+			ps.setString(2, username);
+			ps.executeUpdate();
+			connect().close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");	
+		}
+		return true;
+	}
 
 
 	public int getCredits(String username) {
@@ -308,7 +377,7 @@ public class Database {
 		String queryDatetime = "Select datetime from questions order by datetime limit 1 ;";
 		try {
 			connect();
-			stm = connection.createStatement();
+			stm = connect().createStatement();
 			ResultSet rst = stm.executeQuery(queryDatetime);
 			while (rst.next()){
 				date = format.parse(rst.getString("datetime"));	
@@ -325,7 +394,7 @@ public class Database {
 		return new java.sql.Timestamp(
 				dateToConvert.getTime()).toLocalDateTime();
 	}
-	
+
 	public long checkTime() {
 		Date toDate = new Date();
 		Date fromDate = getDateTimeQuestion();
@@ -340,7 +409,7 @@ public class Database {
 		String queryIdqts = "Select idqts from questions order by datetime limit 1 ;";
 		try {
 			connect();
-			stm = connection.createStatement();
+			stm = connect().createStatement();
 			ResultSet rst = stm.executeQuery(queryIdqts);
 			while (rst.next()){
 				getIdqts = rst.getInt("idqts");	
@@ -351,7 +420,27 @@ public class Database {
 			System.out.println("wrong execute statment.");		
 		}
 		return getIdqts;
+	}
 
+	public int autoMsgToAdmin(String receiver , String sender , int currentCredits) {
+		int rows = 0 ;
+		try {
+			connect();
+			PreparedStatement ps;
+			String message = "The user " + sender + " reach " + currentCredits + " credits and request to be promote." ;
+			ps = connect().prepareStatement("INSERT INTO inbox (receiver, sender , message) "
+					+ "VALUES ((SELECT iduser FROM users WHERE username = ?)"
+					+ ",?,?);");
+			ps.setString(1,receiver);
+			ps.setString(2,sender);
+			ps.setString(3,message);
+			rows = ps.executeUpdate();
+			connect().close();		
+		} catch (SQLException e) {
+
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statment.");		
+		}return rows;	
 	}
 
 }
