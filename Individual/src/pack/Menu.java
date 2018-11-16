@@ -1,21 +1,18 @@
-package paketo;
+package pack;
 
 import java.io.Console;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 public class Menu {
-
-	private User user = new User();
+	
+	private User user = User.instance();
 	private Database db = new Database();
 	private Login login = new Login();
-	FilesWriter filesWriter= new FilesWriter();
+	private FilesWriter filesWriter= new FilesWriter();
 
 	public Menu() {
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public void loginMenu() {
 
@@ -125,13 +122,12 @@ public class Menu {
 				//send message.
 				System.out.println("Write the text you want to send.");
 				String message=console.readLine();
+				//get a correct input
+				String message2 = login.getCorrectInputForMsg(10, 250, message);
 				System.out.println("Write the name of the receiver.");
 				String receiver=console.readLine();
-				//get a correct input
-				//String receiver2 = login.getCorrectInput(4,12,receiver);
-				System.out.println(user.getUserName());
 				if (!user.getUserName().equals(receiver)) {
-					userR.send(receiver , user.getUserName(), message);
+					userR.send(receiver , user.getUserName(), message2);
 				}else {
 					System.out.println("You cannot send a message to yourself.");
 				}
@@ -141,14 +137,11 @@ public class Menu {
 				if ("EditRole".equalsIgnoreCase(user.getRole()) || "DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
 					//check if the pass time is higher than 24 hours from the last edit question.
 					if (db.checkTime()>=24) {
-						//Hours from the last question chnage
 						//System.out.println(db.checkTime()+" hours.");
 						System.out.println("\nWrite the new question.");
 						String newQ = console.readLine();
-						// thelei ftiaksimo to keno
-						//String newQ2 = login.getCorrectInput(10,250, newQ);
-						userR.editQuestion(db.getIdqts(), user.getUserName() , newQ);
-						filesWriter.keepActions(user.getUserName(),"Edit_Question");
+						String newQ2 = login.getCorrectInputForMsg(10, 250, newQ);
+						userR.editQuestion(db.getIdqts(), user.getUserName() , newQ2);
 					}else {
 						System.out.println("You cannot edit a question.");
 						System.out.println("The remaining time for change a question is " + (24-db.checkTime()) +" hours.");
@@ -165,7 +158,6 @@ public class Menu {
 					try {
 						Integer.parseInt(idMsgD);
 						userR.deleteMessage(Integer.parseInt(idMsgD) , user.getId());
-						filesWriter.keepActions(user.getUserName(),"Delete_Message");
 					} catch (NumberFormatException e) {
 						if(idMsgD.equals("") || idMsgD == null) {
 							System.out.println("You have entered empty input."); 
@@ -223,7 +215,7 @@ public class Menu {
 			System.out.println("\t\tPRESS e - TO EXIT PROGRAM");
 			ch  = console.readLine();
 			switch (ch) {
-			case "1":
+			case "1":// view users
 				System.out.println("___________________________________________________________________________________________");
 				userR.viewUsers();
 				System.out.println("|______________________________|______________________|_______________|____________________|");
@@ -240,9 +232,12 @@ public class Menu {
 				break;			
 			case "3"://delete user
 				System.out.println("Write the username of the user who want to delete.");
-				String usernameDelete = console.readLine();
-
-				userR.deleteUser(usernameDelete);
+				String usernameDelete = console.readLine();				
+				if("offline".equalsIgnoreCase(db.getUserStatus(usernameDelete))) {
+					userR.deleteUser(usernameDelete);
+				}else {
+					System.out.println("Cannot delete a user who is online.");
+				}	
 				break;		
 			case "4"://update user
 				System.out.println("Write the username of the user who want to update.");
@@ -256,7 +251,6 @@ public class Menu {
 							+ "2 for password Or 3 for both.\n\t Or e to Exit");
 					h = console.readLine();
 				}
-				//Thelei fitaksimo ta aftakia!!!
 				if (h.equals("1")) {
 					System.out.println("Write the new username for the user.");
 					String newUsername = console.readLine();
@@ -316,8 +310,6 @@ public class Menu {
 			}
 		}
 	}
-
-
 
 }
 

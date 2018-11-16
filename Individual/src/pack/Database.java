@@ -1,4 +1,4 @@
-package paketo;
+package pack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+
 
 public class Database {
 
@@ -63,7 +64,7 @@ public class Database {
 			} connect().close();
 		} catch (SQLException | ParseException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		} return messageList;
 	}
 
@@ -89,7 +90,7 @@ public class Database {
 			} connect().close();
 		} catch (SQLException | ParseException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		} return messageList;
 	}
 
@@ -153,15 +154,14 @@ public class Database {
 			}connect().close();
 		} catch (SQLException | ParseException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		}
 	}
 
 
 
-	public boolean sendMessage (String receiver , String sender , String message ) {
-		boolean messageSend = true;
+	public int sendMessage (String receiver , String sender , String message ) {
+		int rows = 0 ;
 		try {
 			connect();
 			PreparedStatement ps;
@@ -171,13 +171,11 @@ public class Database {
 			ps.setString(1,receiver);
 			ps.setString(2,sender);
 			ps.setString(3,message);
-			ps.executeUpdate();
+			rows = ps.executeUpdate();
 			connect().close();		
 		} catch (SQLException e) {
-			messageSend =false;
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
-		}return messageSend;	
+		}return rows;	
 	}
 
 	public int deleteMessage(int idmsg , int iduser) {
@@ -192,13 +190,13 @@ public class Database {
 			connect().close();		
 		} catch (SQLException e) {		
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
+			System.out.println("wrong execute statement.");		
 		}
 		return rows;	
 	}
 
-	public boolean editQuestion(int idQts , String username , String newQ) {
-		boolean question = true ;
+	public int editQuestion(int idQts , String username , String newQ) {
+		int rows = 0;
 		try {
 			connect();
 			PreparedStatement ps;
@@ -208,34 +206,35 @@ public class Database {
 			ps.setString(1,username);
 			ps.setString(2, newQ);
 			ps.setInt(3, idQts);
-			ps.executeUpdate();
+			rows = ps.executeUpdate();
 			connect().close();		
 		} catch (SQLException e) {
-			question = false ;
+		
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
+			System.out.println("wrong execute statement.");		
 		}
-		return question;
+		return rows;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////     Admin methods
 
-	public boolean createUser(String username , String password) {
+	public int createUser(String username , String password) {
+		int rows = 0 ;
 		try {
 			connect();
 			PreparedStatement ps;
 			ps = connect().prepareStatement("INSERT INTO users (username, password) VALUES (?, AES_ENCRYPT(? , 'secret'));");
 			ps.setString(1,username);
 			ps.setString(2, password);
-			ps.executeUpdate();
+			rows = ps.executeUpdate();
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-			return false;
+			System.out.println("wrong execute statement.");
+			
 		}
-		return true ;
+		return rows ;
 	}
 
 	public int deleteUser(String usernameInput) {
@@ -249,7 +248,7 @@ public class Database {
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		}
 		return rows;
 	}
@@ -283,7 +282,7 @@ public class Database {
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		}
 		return rows;
 	}
@@ -313,7 +312,7 @@ public class Database {
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		}
 		return rows;
 	}
@@ -334,25 +333,26 @@ public class Database {
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");	
+			System.out.println("wrong execute statement.");	
 		}
 	}
 
-	public boolean changeStatus(String username , String status) {
+	public int changeStatus(String username , String status) {
+		int rows = 0;
 		try {
 			connect();
 			PreparedStatement ps;
 			ps = connect().prepareStatement("UPDATE users SET status = ?  WHERE  username = ? ; ");
 			ps.setString(1 , status);
 			ps.setString(2, username);
-			ps.executeUpdate();
+			rows = ps.executeUpdate();
 			connect().close();
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");	
+			System.out.println("wrong execute statement.");	
 		}
-		return true;
+		return rows;
 	}
 
 
@@ -367,7 +367,7 @@ public class Database {
 			} connect().close();			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
+			System.out.println("wrong execute statement.");
 		} 	  
 		return getCredits;
 	}
@@ -385,7 +385,7 @@ public class Database {
 			connect().close();		
 		} catch (SQLException | ParseException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
+			System.out.println("wrong execute statement.");		
 		}
 		return date;
 	}
@@ -417,7 +417,7 @@ public class Database {
 			connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
+			System.out.println("wrong execute statement.");		
 		}
 		return getIdqts;
 	}
@@ -439,8 +439,26 @@ public class Database {
 		} catch (SQLException e) {
 
 			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");		
+			System.out.println("wrong execute statement.");		
 		}return rows;	
+	}
+	
+	public String getUserStatus(String username) {
+		String status = null;
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connect().prepareStatement("Select status from users where username = ? ;");
+			ps.setString(1, username);
+			ResultSet rst = ps.executeQuery();
+			while (rst.next()) {			
+				status = rst.getString("status");
+			}
+			connect().close();		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statement.");		
+		} return status;
 	}
 
 }

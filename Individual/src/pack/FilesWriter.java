@@ -1,4 +1,4 @@
-package paketo;
+package pack;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +21,7 @@ public class FilesWriter {
 		try {
 			//Specify the file name and path here
 			//Important change the path where you want to save.
-			File file = new File("C:\\Users\\Gv\\Desktop\\Keep_Logs");
+			File file = new File("C:\\Users\\Gv\\Desktop\\Keep_Actions");
 			if (!file.exists()) {
 				file.createNewFile();
 				FileWriter fw2 = new FileWriter(file);
@@ -60,7 +60,7 @@ public class FilesWriter {
 		try {
 			//Specify the file name and path here
 			//Important change the path where you want to save.
-			File file = new File("C:\\Users\\Gv\\Desktop\\Keep_Actions");
+			File file = new File("C:\\Users\\Gv\\Desktop\\Keep_Messages");
 			if (!file.exists()) {
 				file.createNewFile();
 				FileWriter fw2 = new FileWriter(file);

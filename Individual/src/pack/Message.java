@@ -1,4 +1,4 @@
-package paketo;
+package pack;
 
 public class Message {
 	

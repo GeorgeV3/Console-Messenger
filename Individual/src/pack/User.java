@@ -1,11 +1,12 @@
-package paketo;
+package pack;
 import java.util.ArrayList;
 
 public class User {
 
-	private Database database = new Database();
+	Database database = new Database();
 	FilesWriter filesWriter = new FilesWriter();
-
+	static User user = new User();
+	
 	private int id;
 	private String userName;
 	private String userPassword;
@@ -34,24 +35,24 @@ public class User {
 	}	
 
 	public void send(String receiver, String sender , String message ){
-		if(database.sendMessage(receiver, sender, message) == true) {
-			System.out.println("Message send.");
+		if(database.sendMessage(receiver, sender, message) > 0) {
+			System.out.println(sender +" : Your message send.");
+			filesWriter.keepActions(user.getUserName(), "Message_Send");
 			filesWriter.keepMessages(sender, receiver, message);
 			if (!"admin".equalsIgnoreCase(sender))
-			database.updateCredits(sender);
+				database.updateCredits(sender);
 			int currentCredits = database.getCredits(sender);
-			//System.out.println(currentCredits);
 			if ( currentCredits == 10) {
 				database.autoMsgToAdmin(receiver, sender, currentCredits);
 			} else if (currentCredits == 20) {
 				database.autoMsgToAdmin(receiver, sender, currentCredits);
 			}
-			
+
 		}else {
 			System.out.printf("Message fail to send it.\nNo user with name %1$s exist.", receiver);
 		}
 	}
-	
+
 	public void editQuestion(int idQts, String username, String newQ){}
 	public void deleteMessage(int idmsg , int iduser){}
 	public void createUser(String username , String password){}
@@ -61,7 +62,7 @@ public class User {
 	public void assignRole(Integer number, String usernameInput){}
 
 	public User() {}
-	
+
 	public User(int id, String userName, String userPassword, String status, String role, int credits) {
 		super();
 		this.id = id;
@@ -70,6 +71,10 @@ public class User {
 		this.status = status;
 		this.role = role;
 		this.credits = credits;
+	}
+	
+	public static User instance() {
+		return user;
 	}
 	public int getId() {
 		return id;

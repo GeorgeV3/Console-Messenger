@@ -1,12 +1,12 @@
-package paketo;
+package pack;
 
 import java.io.Console;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 public class Login {
+	Database db = new Database();
 
 	public Login() {
 		// TODO Auto-generated constructor stub
@@ -24,8 +24,7 @@ public class Login {
 		return true;
 	}
 
-	public boolean validateServerLogin(String username , String password) {
-		Database db = new Database();
+	public boolean validateServerLogin(String username , String password) {	
 		String user = null;
 		String pass = null;	
 		try {
@@ -56,7 +55,6 @@ public class Login {
 	// General methods ,, i create them in login class so i don't  create a new helper one , because in menu class i will call ///
 	// the login methods , so for don't make a new Helper helper = new Helper(); to use the already new login.               ///
 	public User getUserInfo(String username) {
-		Database db = new Database();
 		User user = new User();
 		String role = null;
 		try {
@@ -99,14 +97,24 @@ public class Login {
 
 	//!input.matches("[a-zA-Z0-9]+") ||
 	public String getCorrectInput(int min , int max , String input) {
-		Console console2 = System.console();	
+		Console console = System.console();	
 		while(input.length() < min || input.length() > max || input.contains(" ")){
 			System.out.println("Please enter a valid input!" +
-					"\nAny char between rage "+ min + "-" + max + " .!");
-			input = console2.readLine();		
+					"\nAny char between rage "+ min + "-" + max + " without space between them.");
+			input = console.readLine();		
 		}	
 		return input;
 	}
+	
+	public String getCorrectInputForMsg(int min , int max , String input) {
+		Console console = System.console();
+				while(input.length() < min || input.length() > max){
+					System.out.println("Please enter a valid input!" +
+							"\nAny char between rage "+ min + "-" + max + " .");
+					input = console.readLine();		
+				}return input;
+		}
+	
 
 
 

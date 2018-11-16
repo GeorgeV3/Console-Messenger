@@ -1,4 +1,4 @@
-package paketo;
+package pack;
 
 
 import java.sql.ResultSet;
@@ -6,12 +6,9 @@ import java.sql.Statement;
 
 public class AdminRole extends DeleteRole {
 
-	Database db = new Database();
-	FilesWriter filesWriter = new FilesWriter();
-
 	//public void view(){}
 	public void createUser(String username , String password) {
-		if (db.createUser(username, password) == true) {
+		if (database.createUser(username, password) > 0) {
 			System.out.println("User create successfull.");
 		}else {
 			System.out.println("Something has gone wrong.");
@@ -20,8 +17,8 @@ public class AdminRole extends DeleteRole {
 
 	public void viewUsers() {
 		try {
-			db.connect();
-			Statement stm =db.connect().createStatement();
+			database.connect();
+			Statement stm =database.connect().createStatement();
 			String sql = "SELECT username ,  role , status , credits , status\r\n" + 
 					"FROM users \r\n" + 
 					"WHERE username !=\"admin\";";
@@ -39,23 +36,26 @@ public class AdminRole extends DeleteRole {
 	}
 
 	public void deleteUser(String usernameInput){
-		if (db.deleteUser(usernameInput) > 0) {
+		if (database.deleteUser(usernameInput) > 0) {
 			System.out.println("User delete successfull.");
+			filesWriter.keepActions(user.getUserName(),"Delete_A_User");
 		}else {
 			System.out.println("User did not delete , propably you give wrong username:" + usernameInput + ".");
 		}
 	}
 	public void updateUser(int number , String newUsername , String newPassword , String usernameInput){
-		if (db.updateUser(number, newUsername, newPassword, usernameInput) > 0){
+		if (database.updateUser(number, newUsername, newPassword, usernameInput) > 0){
 			System.out.println("Update successfull.");
+			filesWriter.keepActions(user.getUserName(),"Update_A_User");
 		}else {
 			System.out.println("Update fail , propably you give wrong username: "+ usernameInput +".");
 		}	
 	}
 
 	public void assignRole(Integer number, String usernameInput){
-		if (db.assignRole(number , usernameInput) > 0) {
+		if (database.assignRole(number , usernameInput) > 0) {
 			System.out.println("Assign Role succefull.");
+			filesWriter.keepActions(user.getUserName(),"Assign_A_role");
 		}else {
 			System.out.println("Assign role fail , propably you give wrong username: "+ usernameInput +".");
 		}
