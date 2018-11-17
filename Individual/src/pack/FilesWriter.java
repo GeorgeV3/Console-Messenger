@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,7 +12,7 @@ public class FilesWriter {
 	
 	public void keepActions(String username , String action) {
 		BufferedWriter bw = null;
-		PrintWriter printWriter = null;
+//		PrintWriter printWriter = null;
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy G 'at' HH:mm:ss z");
 		String dateFormat = sdf.format(date);

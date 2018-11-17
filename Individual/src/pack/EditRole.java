@@ -1,6 +1,6 @@
 package pack;
 
-public class EditRole extends User {
+public class EditRole extends Role {
 	
 
 	public EditRole() {

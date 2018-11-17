@@ -50,7 +50,7 @@ public class Menu {
 
 
 	public void userMenu() {
-		User userR = login.createUserRole(user);
+		Role userR = login.createUserRole(user);
 		ArrayList<Message> messageList = new ArrayList<>();
 		String ch = "@#";
 		Console console = System.console();
@@ -86,13 +86,13 @@ public class Menu {
 			System.out.println("\t\tPRESS 1 - FOR SEE THE QUESTIONS");
 			System.out.println("\t\tPRESS 2 - TO READ A SPECIFIC MESSAGE");
 			System.out.println("\t\tPRESS 3 - TO SEND A MESSAGE");	
-			if ("EditRole".equalsIgnoreCase(user.getRole()) || "DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
+			if ("EditRole".equalsIgnoreCase(user.getUserRole()) || "DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 				System.out.println("\t\tPRESS 4 - TO EDIT A QUESTION");
 			}
-			if ("DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
+			if ("DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 				System.out.println("\t\tPRESS 5 - TO DELETE A MESSAGE");
 			}
-			if ("Admin".equalsIgnoreCase(user.getRole())) {
+			if ("Admin".equalsIgnoreCase(user.getUserRole())) {
 				System.out.println("\t\tPRESS a - TO CHANGE TO SUPER ADMIN MENU");
 			}
 			System.out.println("\t\tPRESS h - FOR HELP SECTION");
@@ -134,7 +134,7 @@ public class Menu {
 				break;
 			case "4":
 				//edit a question.
-				if ("EditRole".equalsIgnoreCase(user.getRole()) || "DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
+				if ("EditRole".equalsIgnoreCase(user.getUserRole()) || "DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 					//check if the pass time is higher than 24 hours from the last edit question.
 					if (db.checkTime()>=24) {
 						//System.out.println(db.checkTime()+" hours.");
@@ -152,7 +152,7 @@ public class Menu {
 				break;
 			case "5":
 				//delete message base on id msg
-				if ("DeleteRole".equalsIgnoreCase(user.getRole()) || "Admin".equalsIgnoreCase(user.getRole())) {
+				if ("DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 					System.out.println("Plz provide an id of message you want to delete.");
 					String idMsgD = console.readLine();	
 					try {
@@ -170,7 +170,7 @@ public class Menu {
 				}
 				break;
 			case "a"://change to admin menu.
-				if ("Admin".equalsIgnoreCase(user.getRole())) {
+				if ("Admin".equalsIgnoreCase(user.getUserRole())) {
 					adminMenu();
 				}else {
 					System.out.println("You provided wrong input. Hit e to exit");
@@ -200,7 +200,7 @@ public class Menu {
 	}
 
 	public void adminMenu() {
-		User userR = login.createUserRole(user);
+		Role userR = login.createUserRole(user);
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	

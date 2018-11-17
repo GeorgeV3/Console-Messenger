@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Login {
-	Database db = new Database();
+	private Database db = new Database();
 
 	public Login() {
 		// TODO Auto-generated constructor stub
@@ -56,7 +56,6 @@ public class Login {
 	// the login methods , so for don't make a new Helper helper = new Helper(); to use the already new login.               ///
 	public User getUserInfo(String username) {
 		User user = new User();
-		String role = null;
 		try {
 			db.connect();	
 			PreparedStatement ps = db.connect().prepareStatement("Select iduser ,username , role , status , credits "
@@ -66,8 +65,7 @@ public class Login {
 			while (rst.next()) {			
 				user.setId(rst.getInt("iduser"));
 				user.setUserName(rst.getString("username"));
-				role =(rst.getString("role"));
-				user.setRole(role);
+				user.setUserRole(rst.getString("role"));
 				user.setStatus(rst.getString("status"));
 				user.setCredits(rst.getInt("credits"));		
 				//System.out.println("\n"+role);		
@@ -79,20 +77,21 @@ public class Login {
 		return user;	 
 	}
 
-	public User createUserRole(User user) { 
-		if (user.getRole() != null && "Admin".equalsIgnoreCase(user.getRole())) {
-			//System.out.print("mesa stin if tou create admin");
-			user = new AdminRole();
+	public Role createUserRole(User user) { 
+		Role role = new Role();
+		if (user.getUserRole() != null && "Admin".equalsIgnoreCase(user.getUserRole())) {
+			System.out.print("mesa stin if tou create admin");
+			user.setRole(role = new AdminRole());
 		}
-		if (user.getRole() != null && "EditRole".equalsIgnoreCase(user.getRole())) {
+		if (user.getUserRole() != null && "EditRole".equalsIgnoreCase(user.getUserRole())) {
 			//System.out.print("mesa stin if tou create editorle");
-			user = new EditRole();
+			user.setRole(role = new EditRole());
 		}
-		if (user.getRole() != null && "DeleteRole".equalsIgnoreCase(user.getRole())) {
+		if (user.getUserRole() != null && "DeleteRole".equalsIgnoreCase(user.getUserRole())) {
 			//System.out.print("mesa stin if tou create deleterole");
-			user = new DeleteRole();
+			user.setRole(role =new DeleteRole());
 		}
-		return user;
+		return role;
 	}
 
 	//!input.matches("[a-zA-Z0-9]+") ||
