@@ -1,5 +1,6 @@
 package pack;
 
+
 public class Message {
 	
 	private int id;

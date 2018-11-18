@@ -4,8 +4,8 @@ import java.io.Console;
 import java.util.ArrayList;
 
 public class Menu {
-	
-	private User user = User.instance();
+
+	static User user = User.instance();
 	private Database db = new Database();
 	private Login login = new Login();
 	private FilesWriter filesWriter= new FilesWriter();
@@ -16,7 +16,7 @@ public class Menu {
 
 	public void loginMenu() {
 
-		String ch ="@#" ;
+		String ch =" @#" ;
 		Console console = System.console();
 		while (!(ch.equals("e"))) {
 			System.out.println("\t\tPRESS 1 - FOR LOGIN");
@@ -32,7 +32,7 @@ public class Menu {
 					//validate username & password by server  side 	
 					if(	login.validateServerLogin(username.trim() , password.trim())) {
 						console.printf("Welcome, %1$s.",username);
-						db.changeStatus(username,"online");
+						db.changeUserStatus(username,"online");
 						user = login.getUserInfo(username);	
 						filesWriter.keepActions(user.getUserName(),"login");
 						userMenu();			
@@ -55,25 +55,26 @@ public class Menu {
 		String ch = "@#";
 		Console console = System.console();
 		while (!(ch.equals("e"))) {	
-			//Load all the messages of the user.
+			//Load credits of user
 			int credits = db.getCredits(user.getUserName());
+			//Load all the messages of the user
 			messageList = db.getAllMessages(user.getId());	
-			// get unread messages
-			int unread = 0 ;
-			for (int index =0 ; index <messageList.size(); index++ ) {	
-				if (messageList.get(index).getStatus().equals("unread")) {
-					unread ++;
+			//Create a list of unread messages.
+			ArrayList<Message> unreadList = new ArrayList<>();
+			for ( Message printList : messageList ) {
+				if (printList.getStatus().equals("unread")) {
+					unreadList.add(printList);	
 				}
 			}
-			// get read messages
-			int read = (messageList.size() - unread);
+			// count the read messages
+			int read = (messageList.size() - unreadList.size());
 
-			System.out.println("\n\t\tUser Messages and Credits info.");
+			System.out.println("\n\t\t"+ user.getUserName()+ ": Messages and Credits info.");
 			System.out.println("\t_______________________________________________________");		
 			System.out.printf("%-20s %1s %5s %5s %5s %n", "\t|Username" , "| Unread" , "| Read" , "| Total" , "| Credits |");
 			System.out.println("\t|-------------------|--------|------|-------|---------|");
 			System.out.printf("%-20s %1s %4s %3s %3s %2s %3s %3s %9s %n","\t|" + user.getUserName() 
-			,"|" ,  unread 
+			,"|" ,  unreadList.size() 
 			,"|" ,  read
 			,"|" ,  messageList.size() 
 			,"|" ,  credits + "    |");
@@ -100,26 +101,58 @@ public class Menu {
 
 			ch  = console.readLine();
 			switch (ch) {
-			case "1":
-				//View the questions.
+			case "1"://View the questions.
 				db.getAllQuestions();
 				break;
-			case "2":
-				//message read base on id of msg.
-				System.out.println("Give id for message you want to read.");
-				String idMsg = console.readLine();
-				try {
-					userR.viewMessageById(Integer.parseInt(idMsg),user.getId());
-				} catch (NumberFormatException e) {
-					if(idMsg.equals("") || idMsg == null) {
-						System.out.println("You have entered empty input."); 
-					}  else {
-						System.out.println("You've entered non-intereger number.");
+			case "2"://messages read.
+				System.out.println("Press 1 to read your Unread messages. "
+						+ "Or 2 to read again your old messages.\n\t\t\tOr press e to Exit");
+				String h = console.readLine();
+				while (!h.equals("1") && !h.equals("2") && !h.equals("e")) {
+					System.out.println("Press 1 to read your Unread messages. "
+							+ "Or 2 to read again your old messages.\n\t\t\tOr press e to Exit");
+					h = console.readLine();
+
+				}// read unread message 1 by 1	
+				if (h.equals("1")) {
+					int index = 0;
+					if (index < unreadList.size()) {
+						System.out.println("Message: "  + unreadList.get(index).getSender() + 
+								"\nFrom: "+ unreadList.get(index).getSender() + "Date : " +unreadList.get(index).getDate());
+						db.changeMsgStatus(unreadList.get(index).getId());
+						System.out.println("Press r to see your next message.Or e to exit.");
+					}else {
+						System.out.println("You do not have unread messages.");
+						break;
+					}
+					String h2 = " @#" ;
+					while (!h2.equals("e")) {
+//						System.out.println("Plz provide currect argument.\nPress r to see you next message. Or e to exit.");
+						h2 = console.readLine();
+						if (h2.equals("r")) {
+							if (index < unreadList.size()-1) {
+								index++;
+								System.out.println("Message: "  + unreadList.get(index).getSender() + 
+										"\nFrom: "+ unreadList.get(index).getSender() + "Date: " +unreadList.get(index).getDate());
+								db.changeMsgStatus(unreadList.get(index).getId());
+							}
+							else {
+								System.out.println("You do not have unread messages.");
+								break;
+							}
+						}
+					}
+				}//read all read messages	
+				if (h.equals("2")) {
+					for ( Message printList : messageList ) {
+						if (printList.getStatus().equals("read")) {
+							System.out.println("Message: "  + printList.getMessageData() + 
+									"\nFrom: "+ printList.getSender() + " Date: " +printList.getDate() + "\n");
+						}
 					}
 				}
 				break;
-			case"3":
-				//send message.
+			case"3"://send message.
 				System.out.println("Write the text you want to send.");
 				String message=console.readLine();
 				//get a correct input
@@ -132,8 +165,7 @@ public class Menu {
 					System.out.println("You cannot send a message to yourself.");
 				}
 				break;
-			case "4":
-				//edit a question.
+			case "4"://edit a question.
 				if ("EditRole".equalsIgnoreCase(user.getUserRole()) || "DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 					//check if the pass time is higher than 24 hours from the last edit question.
 					if (db.checkTime()>=24) {
@@ -150,8 +182,7 @@ public class Menu {
 					System.out.println("You provided wrong input. Hit e to exit");
 				}
 				break;
-			case "5":
-				//delete message base on id msg
+			case "5"://delete message base on id msg
 				if ("DeleteRole".equalsIgnoreCase(user.getUserRole()) || "Admin".equalsIgnoreCase(user.getUserRole())) {
 					System.out.println("Plz provide an id of message you want to delete.");
 					String idMsgD = console.readLine();	
@@ -187,7 +218,7 @@ public class Menu {
 						+ "\n\t\t3)delete = all the above and also delete the transacte data.(15+ credits)");
 				break;
 			case "e":
-				db.changeStatus(user.getUserName(),"offline");
+				db.changeUserStatus(user.getUserName(),"offline");
 				filesWriter.keepActions(user.getUserName(),"logout");
 				System.out.println("EXIT PROGRAM");
 				System.exit(0);
@@ -299,7 +330,7 @@ public class Menu {
 				userMenu();
 				break;		
 			case "e":
-				db.changeStatus(user.getUserName(),"offline");
+				db.changeUserStatus(user.getUserName(),"offline");
 				filesWriter.keepActions(user.getUserName(),"logout");
 				System.out.println("EXIT PROGRAM");
 				System.exit(0);

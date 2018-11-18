@@ -1,36 +1,18 @@
 package pack;
-import java.util.ArrayList;
+
 
 public class Role {
 
 	Database database = new Database();
 	FilesWriter filesWriter = new FilesWriter();
-	User user = new User();
 	
-	public void view (int iduser ){
-		ArrayList<Message> messageList = database.getAllMessages(iduser);
-		for ( Message printList : messageList ) {	
-			System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getStatus()
-			+ " " + printList.getDate());	
-		}	
-	}
+	
 
-	public void viewMessageById(int idmsg , int iduser)  {
-		ArrayList<Message> messageList = database.getMessage(idmsg , iduser);
-		if (messageList.size()>0) {
-			for ( Message printList : messageList ) {
-				System.out.println(printList.getId()+ " " + printList.getSender() + " " + printList.getMessageData()
-				+ " " + printList.getDate());	
-			}	
-		}else {
-			System.out.println("You put wrong id number.");
-		}
-	}	
 
 	public void send(String receiver, String sender , String message ){
 		if(database.sendMessage(receiver, sender, message) > 0) {
 			System.out.println(sender +" : Your message send.");
-			filesWriter.keepActions(user.getUserName(), "Message_Send");
+			filesWriter.keepActions(Menu.user.getUserName(), "Message_Send");
 			filesWriter.keepMessages(sender, receiver, message);
 			if (!"admin".equalsIgnoreCase(sender))
 				database.updateCredits(sender);

@@ -25,10 +25,10 @@ public class AdminRole extends DeleteRole {
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
 				System.out.printf("%-30s | %-20s | %12s  | %-19s|%n"
-				,"|Username: "+rst.getString("username")
-				,"Role: " + rst.getString("role")
-				,"Credits: " + rst.getString("credits") 
-				,"Status: "+ rst.getString("status") );
+						,"|Username: "+rst.getString("username")
+						,"Role: " + rst.getString("role")
+						,"Credits: " + rst.getString("credits") 
+						,"Status: "+ rst.getString("status") );
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -38,15 +38,16 @@ public class AdminRole extends DeleteRole {
 	public void deleteUser(String usernameInput){
 		if (database.deleteUser(usernameInput) > 0) {
 			System.out.println("User delete successfull.");
-			filesWriter.keepActions(user.getUserName(),"Delete_A_User");
+			filesWriter.keepActions(Menu.user.getUserName(),"Delete_A_User");
 		}else {
 			System.out.println("User did not delete , propably you give wrong username:" + usernameInput + ".");
 		}
 	}
+
 	public void updateUser(int number , String newUsername , String newPassword , String usernameInput){
 		if (database.updateUser(number, newUsername, newPassword, usernameInput) > 0){
 			System.out.println("Update successfull.");
-			filesWriter.keepActions(user.getUserName(),"Update_A_User");
+			filesWriter.keepActions(Menu.user.getUserName(),"Update_A_User");
 		}else {
 			System.out.println("Update fail , propably you give wrong username: "+ usernameInput +".");
 		}	
@@ -55,7 +56,7 @@ public class AdminRole extends DeleteRole {
 	public void assignRole(Integer number, String usernameInput){
 		if (database.assignRole(number , usernameInput) > 0) {
 			System.out.println("Assign Role succefull.");
-			filesWriter.keepActions(user.getUserName(),"Assign_A_role");
+			filesWriter.keepActions(Menu.user.getUserName(),"Assign_A_role");
 		}else {
 			System.out.println("Assign role fail , propably you give wrong username: "+ usernameInput +".");
 		}

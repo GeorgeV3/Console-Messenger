@@ -29,7 +29,7 @@ public class Database {
 	private Connection connection;
 	private Statement stm;
 	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private DateFormat dformat = new SimpleDateFormat("MM/dd/yyyy G 'at' HH:mm:ss z");	
+	private DateFormat dformat = new SimpleDateFormat(" 'at' HH:mm:ss z dd/MM/yyyy");	
 
 	public Connection connect() {
 		try {
@@ -93,49 +93,6 @@ public class Database {
 			System.out.println("wrong execute statement.");
 		} return messageList;
 	}
-
-	//	public int countStatusMessages(int iduser , String status) {
-	//		int countStatus = 0;
-	//		try {
-	//			connect();
-	//			PreparedStatement ps;
-	//			ps = connection.prepareStatement("Select count(status) from inbox where receiver = ? and status = ? ;");
-	//			ps.setInt(1,iduser);
-	//			ps.setString(2, status);
-	//			ResultSet rst = ps.executeQuery();
-	//			while (rst.next()) {
-	//				countStatus = rst.getInt("count(status)");
-	//			}connect().close();
-	//		} catch (SQLException e) {
-	//			// TODO Auto-generated catch block
-	//			System.out.println("wrong execute statment.");
-	//		}
-	//		return countStatus;
-	//	}
-
-	//	public boolean checkIfExistUser(String username) {
-	//		try {
-	//			connect();
-	//			PreparedStatement ps;
-	//			ps = connection.prepareStatement("Select username from users where username = ?;");
-	//			ps.setString(1,username);
-	//			ResultSet rst = ps.executeQuery();
-	//			//while (rst.next()) {
-	//			String userName = rst.getString("username");
-	//			//}	
-	//			connect().close();
-	//			if (username.equals(userName)) {
-	//				System.out.println("Message send it.");
-	//				return true;
-	//			}else {
-	//				System.out.printf("Message fail to send it.\nNo user with name %1$s exist in database.",username);
-	//			}
-	//		} catch (SQLException e) {
-	//			// TODO Auto-generated catch block
-	//			System.out.println("wrong execute statment.");
-	//		}
-	//		return false;		
-	//	}
 
 	public void getAllQuestions() {
 		try {
@@ -215,6 +172,23 @@ public class Database {
 		}
 		return rows;
 	}
+	
+	public int changeMsgStatus(int idmsg) {
+		int rows = 0;
+		try {
+			connect();
+			PreparedStatement ps;
+			ps = connect().prepareStatement("UPDATE inbox SET status = 'read'  WHERE  idmsg = ? ; ");
+			ps.setInt(1 , idmsg);
+			rows = ps.executeUpdate();
+			connect().close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("wrong execute statement.");	
+		}
+		return rows;
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////     Admin methods
@@ -266,14 +240,14 @@ public class Database {
 			}		
 			if (number == 2) {
 				PreparedStatement ps2;
-				ps2 =connect().prepareStatement("UPDATE users SET password = ? WHERE username = ? ;");
+				ps2 =connect().prepareStatement("UPDATE users SET password =  AES_ENCRYPT(? , 'secret') WHERE username = ? ;");
 				ps2.setString(1,newPassword);	
 				ps2.setString(2, usernameInput);
 				rows = ps2.executeUpdate();
 			}	
 			if (number == 3) {
 				PreparedStatement ps3;
-				ps3 =connect().prepareStatement("UPDATE users SET username = ? , password = ?  WHERE username = ? ; ");
+				ps3 =connect().prepareStatement("UPDATE users SET username = ? , password = AES_ENCRYPT(? , 'secret')  WHERE username = ? ; ");
 				ps3.setString(1,newUsername);	
 				ps3.setString(2,newPassword);	
 				ps3.setString(3,usernameInput);	
@@ -337,7 +311,7 @@ public class Database {
 		}
 	}
 
-	public int changeStatus(String username , String status) {
+	public int changeUserStatus(String username , String status) {
 		int rows = 0;
 		try {
 			connect();
