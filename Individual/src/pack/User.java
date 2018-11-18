@@ -14,6 +14,21 @@ public class User {
 	public static User instance() {
 		return user;
 	}
+	
+	
+	public Role createUserRole(User user) { 
+		Role role = new Role();
+		if (user.getUserRole() != null && "Admin".equalsIgnoreCase(user.getUserRole())) {
+			user.setRole(role = new AdminRole());
+		}
+		if (user.getUserRole() != null && "EditRole".equalsIgnoreCase(user.getUserRole())) {
+			user.setRole(role = new EditRole());
+		}
+		if (user.getUserRole() != null && "DeleteRole".equalsIgnoreCase(user.getUserRole())) {
+			user.setRole(role =new DeleteRole());
+		}
+		return role;
+	}
 
 	public User() {
 		// TODO Auto-generated constructor stub

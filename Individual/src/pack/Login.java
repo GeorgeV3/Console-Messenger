@@ -45,80 +45,34 @@ public class Login {
 			System.out.println("pass");
 			return true;
 		}else {
-			System.out.println("No user with this username or password not exist.");
+			System.out.println("No user with this username or password exists.");
 			return false;
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// General methods 
-	
-	public User getUserInfo(String username) {
-		User user = new User();
-		try {
-			db.connect();	
-			PreparedStatement ps = db.connect().prepareStatement("Select iduser ,username , role , status , credits "
-					+ "from users where username = ? ;");
-			ps.setString(1,username);
-			ResultSet rst = ps.executeQuery();	
-			while (rst.next()) {			
-				user.setId(rst.getInt("iduser"));
-				user.setUserName(rst.getString("username"));
-				user.setUserRole(rst.getString("role"));
-				user.setStatus(rst.getString("status"));
-				user.setCredits(rst.getInt("credits"));		
-				//System.out.println("\n"+role);		
-			} db.connect().close();			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statment.");
-		} 	  
-		return user;	 
-	}
+	// General methods for correct input
 
-	public Role createUserRole(User user) { 
-		Role role = new Role();
-		if (user.getUserRole() != null && "Admin".equalsIgnoreCase(user.getUserRole())) {
-			System.out.print("mesa stin if tou create admin");
-			user.setRole(role = new AdminRole());
-		}
-		if (user.getUserRole() != null && "EditRole".equalsIgnoreCase(user.getUserRole())) {
-			//System.out.print("mesa stin if tou create editorle");
-			user.setRole(role = new EditRole());
-		}
-		if (user.getUserRole() != null && "DeleteRole".equalsIgnoreCase(user.getUserRole())) {
-			//System.out.print("mesa stin if tou create deleterole");
-			user.setRole(role =new DeleteRole());
-		}
-		return role;
-	}
 
-	//!input.matches("[a-zA-Z0-9]+") ||
 	public String getCorrectInput(int min , int max , String input) {
 		Console console = System.console();	
 		while(input.length() < min || input.length() > max || input.contains(" ")){
 			System.out.println("Please enter a valid input!" +
-					"\nAny char between rage "+ min + "-" + max + " without space between them.");
+					"\nAny char between the following range "+ min + "-" + max + " without space between them.");
 			input = console.readLine();		
 		}	
 		return input;
 	}
-	
+
 	public String getCorrectInputForMsg(int min , int max , String input) {
 		Console console = System.console();
-				while(input.length() < min || input.length() > max){
-					System.out.println("Please enter a valid input!" +
-							"\nAny char between rage "+ min + "-" + max + " .");
-					input = console.readLine();		
-				}return input;
-		}
-	
-
-
-
-
-
+		while(input.length() < min || input.length() > max){
+			System.out.println("Please enter a valid input!" +
+					"\nAny char between the following range "+ min + "-" + max + " .");
+			input = console.readLine();		
+		}return input;
+	}
 
 
 }

@@ -5,9 +5,6 @@ public class Role {
 
 	Database database = new Database();
 	FilesWriter filesWriter = new FilesWriter();
-	
-	
-
 
 	public void send(String receiver, String sender , String message ){
 		if(database.sendMessage(receiver, sender, message) > 0) {
@@ -22,7 +19,6 @@ public class Role {
 			} else if (currentCredits == 20) {
 				database.autoMsgToAdmin(receiver, sender, currentCredits);
 			}
-
 		}else {
 			System.out.printf(sender +" : Your message fail to send it.\nNo user with name %1$s exist.", receiver);
 		}
@@ -31,9 +27,7 @@ public class Role {
 	public void editQuestion(int idQts, String username, String newQ){}
 	public void deleteMessage(int idmsg , int iduser){}
 	public void createUser(String username , String password){}
-	public void viewUsers(){
-		System.out.println("Mesa sto role oxi ston admin");
-	}
+	public void viewUsers(){}
 	public void deleteUser(String usernameInput){}
 	public void updateUser(int number , String newUsername , String newPassword , String usernameInput){}
 	public void assignRole(Integer number, String usernameInput){}

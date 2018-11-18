@@ -12,9 +12,8 @@ public class FilesWriter {
 	
 	public void keepActions(String username , String action) {
 		BufferedWriter bw = null;
-//		PrintWriter printWriter = null;
 		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy G 'at' HH:mm:ss z");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy G 'at' HH:mm:ss z");
 		String dateFormat = sdf.format(date);
 		String headLine = "------DATETIME-----------------USERNAME------ACTION----";
 		try {
@@ -29,8 +28,6 @@ public class FilesWriter {
 				bw2.close();
 			}
 			FileWriter fw = new FileWriter(file , true);
-//			printWriter = new PrintWriter(fw);
-//			printWriter.printf("%2s | %8s | %5s %n", dateFormat , username , action);
 			bw = new BufferedWriter(fw);
 			bw.newLine();
 			bw.write(dateFormat +" | " + username + "     | " + action );
@@ -53,7 +50,7 @@ public class FilesWriter {
 	public void keepMessages(String sender , String receiver , String  messageData) {
 		BufferedWriter bw = null;
 		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy G 'at' HH:mm:ss z");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy G 'at' HH:mm:ss z");
 		String dateFormat = sdf.format(date);
 		String headLine = "------DATETIME-----------------SENDER------RECEIVER----MESSAGE---";
 		try {
