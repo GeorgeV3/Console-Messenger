@@ -94,7 +94,7 @@ public class Database {
 		try {
 			connect();
 			stm = connect().createStatement();
-			String sql = "select * from questions order by datetime;";
+			String sql = "select * from questions order by datetime DESC;";
 			ResultSet rst = stm.executeQuery(sql);
 			while(rst.next())  {
 				int id = rst.getInt("idqts");
@@ -102,8 +102,8 @@ public class Database {
 				String question = rst.getString("question");
 				Date date = format.parse(rst.getString("datetime"));
 				String datetime = dformat.format(date);
-				System.out.println("\n\nID: " + id +"  Question: "+ question +"\nFrom: "+ senderQ + 
-						" Date: " + datetime );
+				System.out.println("\n\nQuestion: " + id +"\nText: "+ question +"\nFrom: "+ senderQ + 
+						" " + datetime );
 			}connect().close();
 		} catch (SQLException | ParseException e) {
 			// TODO Auto-generated catch block
@@ -254,16 +254,15 @@ public class Database {
 		return getIdqts;
 	}
 
-	public int autoMsgToAdmin(String receiver , String sender , int currentCredits) {
+	public int autoMsgToAdmin( String sender , int currentCredits) {
 		int rows = 0 ;
 		try {
 			connect();
 			PreparedStatement ps;
 			String message = "The user " + sender + " reach " + currentCredits + " credits and request to be promote." ;
 			ps = connect().prepareStatement("INSERT INTO inbox (receiver, sender , message) "
-					+ "VALUES ((SELECT iduser FROM users WHERE username = ?)"
+					+ "VALUES ((SELECT iduser FROM users WHERE username = 'admin' )"
 					+ ",?,?);");
-			ps.setString(1,receiver);
 			ps.setString(2,sender);
 			ps.setString(3,message);
 			rows = ps.executeUpdate();

@@ -14,7 +14,7 @@ public class AdminRole extends DeleteRole {
 			System.out.println("User create successfull.");
 			filesWriter.keepActions(Menu.user.getUserName(),"Create_A_User");
 		}else {
-			System.out.println("Something has gone wrong.");
+			System.out.println("Something has gone wrong.\nPropably a user with this username has already exist.");
 		}
 	}
 
@@ -85,9 +85,7 @@ public class AdminRole extends DeleteRole {
 			rows = ps.executeUpdate();
 			database.connect().close();		
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			System.out.println("wrong execute statement.");
-			
+			// TODO Auto-generated catch block			
 		}
 		return rows ;
 	}
@@ -146,24 +144,27 @@ public class AdminRole extends DeleteRole {
 		int rows = 0 ;
 		try {
 			database.connect();
+			
 			if (number == 1) {
-				PreparedStatement ps1;
-				ps1 =database.connect().prepareStatement("UPDATE users SET role ='EditRole' where username = ? ;");
-				ps1.setString(1,usernameInput);		
-				rows = ps1.executeUpdate();
-			}		
-			if (number == 2) {
-				PreparedStatement ps2;
-				ps2 =database.connect().prepareStatement("UPDATE users SET role ='DeleteRole' where username = ? ;");
-				ps2.setString(1,usernameInput);		
-				rows = ps2.executeUpdate();
-			}	
-			if (number == 3) {
 				PreparedStatement ps3;
 				ps3 =database.connect().prepareStatement("UPDATE users SET role ='NoRole' where username = ? ;");
 				ps3.setString(1,usernameInput);		
 				rows = ps3.executeUpdate();
 			}
+			
+			if (number == 2) {
+				PreparedStatement ps1;
+				ps1 =database.connect().prepareStatement("UPDATE users SET role ='EditRole' where username = ? ;");
+				ps1.setString(1,usernameInput);		
+				rows = ps1.executeUpdate();
+			}		
+			if (number == 3) {
+				PreparedStatement ps2;
+				ps2 =database.connect().prepareStatement("UPDATE users SET role ='DeleteRole' where username = ? ;");
+				ps2.setString(1,usernameInput);		
+				rows = ps2.executeUpdate();
+			}	
+			
 			database.connect().close();		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

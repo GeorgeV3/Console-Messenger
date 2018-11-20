@@ -120,7 +120,7 @@ public class Menu {
 					int index = 0;
 					if (index < unreadList.size()) {
 						System.out.println("Message: "  + (index+1) + "\nText: "  + unreadList.get(index).getMessageData() +
-								"\nFrom: "+ unreadList.get(index).getSender() + " Date : " +unreadList.get(index).getDate());
+								"\nFrom: "+ unreadList.get(index).getSender() + " " +unreadList.get(index).getDate());
 						db.changeMsgStatus(unreadList.get(index).getId());
 						System.out.println("-------------------------------------------------------------------------------");
 						System.out.println("Press r to see your next message Or e to exit.");
@@ -135,7 +135,7 @@ public class Menu {
 							if (index < unreadList.size()-1) {
 								index++;
 								System.out.println("Message: "  + (index+1) + "\nText: "  + unreadList.get(index).getMessageData() +
-										"\nFrom: "+ unreadList.get(index).getSender() + " Date: " +unreadList.get(index).getDate());
+										"\nFrom: "+ unreadList.get(index).getSender() + " " +unreadList.get(index).getDate());
 								db.changeMsgStatus(unreadList.get(index).getId());
 								System.out.println("-------------------------------------------------------------------------------");
 								System.out.println("Press r to see your next message Or e to exit.");
@@ -150,7 +150,7 @@ public class Menu {
 				if (h.equals("2")) {
 					for ( Message printList : readList ) {
 						System.out.println("Message: "+ (readList.indexOf(printList)+1)+"\nText: "  + printList.getMessageData() + 
-								"\nFrom: "+ printList.getSender() + " Date: " +printList.getDate() + "\n");	
+								"\nFrom: "+ printList.getSender() + " " +printList.getDate() + "\n");	
 					}
 				}
 				break;
@@ -323,12 +323,12 @@ public class Menu {
 			case "5"://assignRole
 				System.out.println("Write the username of the user who wants to change a Role.");
 				String usernameToAssign = console.readLine();
-				System.out.println("Press 1 to assign to Edit Role "
-						+ "Or 2 to assign to Delete Role Or 3 to assign to Normal Role.\n\t Or press e to Exit");
+				System.out.println("Press 1 to assign to Normal Role "
+						+ "Or 2 to assign to Edit Role Or 3 to assign to Delete Role.\n\t Or press e to Exit");
 				String h2 = console.readLine();
 				while (!h2.equals("1") && !h2.equals("2") && (!h2.equals("3")) && !h2.equals("e")) {
-					System.out.println("please provide VALID  argument. 1 to assign to Edit Role "
-							+ "Or 2 to assign to Delete Role Or 3 to assign to No Role.\\n\\t Or press e to Exit");
+					System.out.println("please provide VALID  argument. 1 to assign to Normal Role "
+							+ "Or 2 to assign to Edit Role Or 3 to assign to Delete Role.\n\t Or press e to Exit");
 					h2 = console.readLine();
 				}if (h2.equals("1")) {	
 					userR.assignRole(1 , usernameToAssign);

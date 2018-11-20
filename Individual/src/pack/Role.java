@@ -15,9 +15,9 @@ public class Role {
 				database.updateCredits(sender);
 			int currentCredits = database.getCredits(sender);
 			if ( currentCredits == 10) {
-				database.autoMsgToAdmin(receiver, sender, currentCredits);
+				database.autoMsgToAdmin( sender, currentCredits);
 			} else if (currentCredits == 20) {
-				database.autoMsgToAdmin(receiver, sender, currentCredits);
+				database.autoMsgToAdmin( sender, currentCredits);
 			}
 		}else {
 			System.out.printf(sender +" : Your message fail to send it.\nNo user with name %1$s exist.", receiver);
