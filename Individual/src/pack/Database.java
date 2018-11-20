@@ -263,8 +263,8 @@ public class Database {
 			ps = connect().prepareStatement("INSERT INTO inbox (receiver, sender , message) "
 					+ "VALUES ((SELECT iduser FROM users WHERE username = 'admin' )"
 					+ ",?,?);");
-			ps.setString(2,sender);
-			ps.setString(3,message);
+			ps.setString(1,sender);
+			ps.setString(2,message);
 			rows = ps.executeUpdate();
 			connect().close();		
 		} catch (SQLException e) {
